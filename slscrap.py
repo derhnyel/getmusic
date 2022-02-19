@@ -77,9 +77,20 @@ def get_tracks(url):
         return art_link,download_link
     else:
         #//*[@id="the-post"]/div/div[2]/p[6]/strong/a
-        download_link = dom.xpath('//*[@id="the-post"]/div/div[2]/p[5]/strong/a/@href')[0]
-        if download_link.endswith(".htm") or download_link.endswith(".html") :
-            download_link = dom.xpath('//*[@id="the-post"]/div/div[2]/p[6]/strong/a/@href')[0]
+        try:
+            download_link = dom.xpath('//*[@id="the-post"]/div/div[2]/p[5]/strong/a/@href')[0]
+        except:
+            
+        #     try:
+        #         download_link = dom.xpath('//*[@id="the-post"]/div/div[2]/div[6]/table/tbody/tr[5]/td[2]/div[1]/div[7]/span/b/a/@href')[0] 
+        #     except:
+        #         //*[@id="the-post"]/div/div[2]/div[10]/table/tbody/tr[14]/td[2]/div[1]/div[7]/span/b/a       
+        if download_link.endswith(".htm") or download_link.endswith(".html"):
+            try:
+                download_link = dom.xpath('//*[@id="the-post"]/div/div[2]/p[6]/strong/a/@href')[0]
+            except:
+                return None
+                'div span[class="ws12"] a'    
     print(download_link)         
     response_elements = response_soup.select('li strong')
     songs_collection=[]
