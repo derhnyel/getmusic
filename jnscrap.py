@@ -1,6 +1,13 @@
 
 #https://justnaija.com/music/album/page/1-19
 #https://justnaija.com/music-mp3/1-286
+import requests
+from bs4 import BeautifulSoup as bs4 
+from fake_useragent import UserAgent
+UAgent = UserAgent()
+uri = https://justnaija.com/music/album/page/1
+webpage = requests.get(uri,headers={"User-Agent": UAgent.random})
+ssp = bs4(webpage.content, "html.parser")
 jt = ssp.select("main article aside a")
 jp = ssp.select("main article h3 a")
 jimg = ssp.select("main article img")
@@ -11,7 +18,7 @@ for index in range(len(jp)):
         art_link=jimg[index]['data-src']
 
 ####Tracks
-        artist,title=jp[index].text.split("–")
+        #artist,title=jp[index].text.split("–")
         # try:
         #     title,ft= tit_ft.split("ft.")
 
