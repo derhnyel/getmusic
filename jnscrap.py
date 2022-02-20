@@ -52,10 +52,6 @@ for index in range(len(jp)):
 
 ####Tracks
         #artist,title=jp[index].text.split("–")
-        # try:
-        #     title,ft= tit_ft.split("ft.")
-
-        # except:
-        #     title = tit_ft    
+ 
        
 
