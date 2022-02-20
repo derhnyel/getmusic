@@ -38,15 +38,7 @@ def func(link):
         song_title = i.h4.a.text + i.span.text if i.span!=None else i.h4.a.text
         print("---TRACK "+str(cnt)+"--- "+song_title)
         cnt+=1
-
-    
-
-        # if i.span!=None:
-        #     #composer = i.strong.text + i.span.text
-        #     song_title = i.h4.a.text + i.span.text
-        # else:
-        #     #composer = i.strong.text '
-        #     song_title = i.h4.a.text     
+  
 
 for index in range(len(jp)):
         title=jp[index].text
