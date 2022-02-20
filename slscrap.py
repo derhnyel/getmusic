@@ -1,4 +1,3 @@
-#import fake
 import time
 from lxml import etree
 import requests
@@ -13,7 +12,7 @@ mode = None
 #song_db_album={'artist_name':{'title':[art_link,download_link,[('song_title','song_link')]]}}
 #song_db_track={'artist_name':{'title':[art_link,download_link]}}
 
-
+# BUILD AN ENGINE FOR SONGSLOVER SCRAPPER
 def fetch_details(uri,track=False):
     global mode
     webpage = requests.get(uri,headers={"User-Agent": UAgent.random})
@@ -28,7 +27,7 @@ def fetch_details(uri,track=False):
         title=title.strip()     
         url = element.a['href']
         #(artist_name,title,url)
-        print(artist_name,title)
+        print("Artist Name: %s , Album/Track Title: %s"%(artist_name,title))
         if track:
             mode = 'track'
             song_details= get_tracks(url)
@@ -46,14 +45,18 @@ def get_tracks(url):
     response = requests.get(url, headers={"User-Agent": UAgent.random})
     response_soup=bs4(response.text,"html.parser")
     dom = etree.HTML(str(response_soup))
+    #REFACTOR LINE 48-57
     try:
         art_link=response_soup.figure.img['src']
     except:
         try:
-            art_link= response_soup.select('div[class="entry"] p')[0].img['src']
+            art_link= response_soup.select('div[class="entry"] p img[src]')[0]['src']
         except:
-            art_link= response_soup.select('div[class="entry"] h2')[0].img['src']    
-
+            try:
+                art_link= response_soup.select('div[class="entry"] h2 img[src]')[0]['src']
+            except:
+                return None        
+    #REFACTOR LINE 58 - 83
     if mode == "track":
         try:
             download_link = dom.xpath('//*[@id="the-post"]/div/div[2]/p[3]/strong/a/@href')[0]
@@ -70,42 +73,84 @@ def get_tracks(url):
                         try:
                             download_link = dom.xpath('//*[@id="the-post"]/div/div[2]/h2/span/a/@href')[0] 
                         except:
-                            download_link = dom.xpath('//*[@id="the-post"]/div/div[2]/p[2]/a/@href')[0] 
-
+                            try:
+                                download_link = response_soup.find(string= "Save Link").find_previous('a')['href']
+                            except:
+                                download_link = dom.xpath('//*[@id="the-post"]/div/div[2]/p[2]/a/@href')[0] 
+        print("Track Art : " ,art_link)
+        print("Track Download Link : " ,download_link)
         if download_link.endswith(".htm") or download_link.endswith(".html"):  
-            return None             
+            return None                 
         return art_link,download_link
+    #REFACTOR ....TOO MANY TRY / EXCEPTS LINE 84-113
     else:
-        #//*[@id="the-post"]/div/div[2]/p[6]/strong/a
         try:
             download_link = dom.xpath('//*[@id="the-post"]/div/div[2]/p[5]/strong/a/@href')[0]
         except:
-            
-        #     try:
-        #         download_link = dom.xpath('//*[@id="the-post"]/div/div[2]/div[6]/table/tbody/tr[5]/td[2]/div[1]/div[7]/span/b/a/@href')[0] 
-        #     except:
-        #         //*[@id="the-post"]/div/div[2]/div[10]/table/tbody/tr[14]/td[2]/div[1]/div[7]/span/b/a       
+            try:
+                download_link=response_soup.select('div span[class="ws12"] a')[1]['href']
+            except:
+                try:
+                    download_link = response_soup.find(string='Download All in One Server 2').find_previous('a')['href']
+                except:
+                    try:
+                       download_link = response_soup.find(string= "Download All in One (Server 2)").find_previous('a')['href'] 
+                    except:
+                        try:
+                            download_link = response_soup.find(string= "All in One – ( Zip File ) Server 2").find_previous('a')['href'] 
+                            
+                        except:
+                            try:
+                                download_link = response_soup.find(string= "Download All in One Server From 2").find_previous('a')['href'] 
+                            except:
+                                try:
+                                    download_link = response_soup.find(string= "Download All in One zip Server 2").find_previous('a')['href']    
+                                except:
+                                    download_link=".html"         
         if download_link.endswith(".htm") or download_link.endswith(".html"):
             try:
                 download_link = dom.xpath('//*[@id="the-post"]/div/div[2]/p[6]/strong/a/@href')[0]
             except:
-                return None
-                'div span[class="ws12"] a'    
-    print(download_link)         
-    response_elements = response_soup.select('li strong')
+                download_link=None
+    #REFACTOR RESPONSE ELEMENT CODE BLOCK***THIS IS FOR TESTING PURPOSE ONLY*** LINE 116-124                              
+    response_elements = response_soup.select('li strong a')
+    if response_elements==[]:
+       response_elements = response_soup.select('p span strong a')
+    if response_elements==[]:
+        response_elements = response_soup.select('tr td div[class="wpmd"] a')    
+    if response_elements==[]:
+       response_elements = response_soup.select('span[style="color: #99cc00;"] a')
+    if response_elements==[]:
+        response_elements = response_soup.select('span[style="color: #ff99cc;"] a')
+              
+    print("Album Art Link : " ,art_link)
+    print("Album Download Link : " ,download_link)   
     songs_collection=[]
+    cnt=1
     for element in response_elements:
         try:
-            song_link = element.a['href']
-            song_title = element.a.text
+            song_link = element['href']
+            song_title = element.text
+            #REGEX WOULD WORK BETTER HERE
+            keywords=['Server','Apple Store','Amazon Store','Youtube','Apple Music','ITunes','Amazon Music','Buy Album',"Download Album"]
+            keyword=[i for i in keywords if i in song_title]
+            if any(keyword):
+                continue
+            elif song_title is None:
+                continue  
+            elif song_title.startswith('Download'):
+               song_title=song_title[8:] 
             songs_collection.append((song_title,song_link))
+            print("---TRACK "+str(cnt)+"--- "+song_title)
         except:
             pass
+        cnt+=1
             #song_title=j.text
-            #temp_songs_dict.append((song_title,"@#$%@^!"))      
+            #temp_songs_dict.append((song_title,"@#$%@^!"))
+    #print(songs_collection)
     return art_link,download_link,songs_collection,      
 
 #for i in range(5,5):
 #    print('Page : '+str(i))
-url_albums = "https://songslover.vip/albums/page/250"
-fetch_details(url_albums)
+url_albums = "https://songslover.vip/category/tracks/page/1"
+fetch_details(url_albums,track=True)
