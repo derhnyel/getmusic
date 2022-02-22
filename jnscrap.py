@@ -13,14 +13,6 @@ mode = None
 
 
 
-uri = "https://justnaija.com/music/album/page/1"
-webpage = requests.get(uri,headers={"User-Agent": UAgent.random})
-
-
-ssp = bs4(webpage.content, "html.parser")
-jt = ssp.select("main article aside a")
-jp = ssp.select("main article h3 a")
-jimg = ssp.select("main article img")
 
 
 
@@ -30,7 +22,10 @@ def func(link):
     sss = bs4(resp.text,"html.parser")
     pg = sss.select('div[class="mu-o-c"] div[class="mu-o-unit-c"] div[class="album-side-1"]')
     #download_link for both tracks and albums
-    download_link = sss.select('p[class="song-download"] a')[0]['href']
+    try:
+        download_link = sss.select('p[class="song-download"] a')[0]['href']
+    except:
+        download_link =None    
     print("Album Download Link : " ,download_link)
     cnt=1
     for i in pg:
@@ -39,19 +34,33 @@ def func(link):
         print("---TRACK "+str(cnt)+"--- "+song_title)
         cnt+=1
   
+for i in range(16,20):
+    print('_______________________________PAGE ' + str(i)+'_________________________________________')
+    uri = "https://justnaija.com/music/album/page/"+str(i)
+    webpage = requests.get(uri,headers={"User-Agent": UAgent.random})
 
-for index in range(len(jp)):
-        title=jp[index].text
-        link=jp[index]['href']
-        artist=jt[index].text
-        art_link=jimg[index]['data-src']
-        print("Artist Name: ",artist)
-        print('Album Title : ',title)
-        print("Album Art :" ,art_link)
-        func(link)
+
+    ssp = bs4(webpage.content, "html.parser")
+    jt = ssp.select("main article aside a")
+    jp = ssp.select("main article h3 a")
+    jimg = ssp.select("main article img")
+    for index in range(len(jp)):
+            title=jp[index].text
+            link=jp[index]['href']
+            artist=jt[index].text
+            art_link=jimg[index]['data-src']
+            print("Artist Name: ",artist)
+            print('Album Title : ',title)
+            print("Album Art :" ,art_link)
+            func(link)
 
 ####Tracks
         #artist,title=jp[index].text.split("–")
+
+
+
+
+
  
        
 
