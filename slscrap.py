@@ -150,7 +150,7 @@ def get_tracks(url):
     #print(songs_collection)
     return art_link,download_link,songs_collection,      
 
-#for i in range(5,5):
-#    print('Page : '+str(i))
-url_albums = "https://songslover.vip/category/tracks/page/1"
-fetch_details(url_albums,track=True)
+for i in range(1,255):
+   print('_________________________________Page : '+str(i)+'__________________________________________________')
+   url_albums = "https://songslover.vip/albums/page/"+str(i)
+   fetch_details(url_albums)
