@@ -13,9 +13,6 @@ mode = None
 
 
 
-
-
-
 def func(link):
     time.sleep(0.1)
     resp= requests.get(link,headers={"User-Agent": UAgent.random})

@@ -21,10 +21,10 @@ def fetch_details(uri,track=False):
     for element in soup_elements:
         try:
             artist_name,title=element.text.split(' –')
-        except:
-            continue  
+        except: 
+            title = artist_name = element.text
         artist_name=artist_name.strip()
-        title=title.strip()     
+        title = title.strip()     
         url = element.a['href']
         #(artist_name,title,url)
         print("Artist Name: %s , Album/Track Title: %s"%(artist_name,title))
@@ -97,8 +97,7 @@ def get_tracks(url):
                        download_link = response_soup.find(string= "Download All in One (Server 2)").find_previous('a')['href'] 
                     except:
                         try:
-                            download_link = response_soup.find(string= "All in One – ( Zip File ) Server 2").find_previous('a')['href'] 
-                            
+                            download_link = response_soup.find(string= "All in One – ( Zip File ) Server 2").find_previous('a')['href']   
                         except:
                             try:
                                 download_link = response_soup.find(string= "Download All in One Server From 2").find_previous('a')['href'] 
