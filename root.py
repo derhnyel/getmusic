@@ -11,9 +11,9 @@ class RootFetch():
     site_uri = None
     
 
-    def get_formated_url(self,page=None,type_=None):
+    def get_formated_url(self,page=None,format=None):
         url = urlparse(self.site_uri)
-        url_path = helpers.join_url_path(self.get_url_paths(page,type_))
+        url_path = helpers.join_url_path(self.get_url_paths(page,format))
         self.formated_url = url._replace(path=url_path)
         return self.formated_url.geturl()
     
@@ -33,7 +33,6 @@ class RootFetch():
         return "html source page"
           
     async def get_soup_object(self,url):
-        
         source = await self.get_page_content(url)
         return bs4(source,'html')
 
@@ -41,19 +40,19 @@ class RootFetch():
         loop = asyncio.get_event_loop()       
         return loop.run_until_complete(self.get_soup_object(url))
     
-    def fetch(self,page = 1,type_= None,**kwargs):
+    def fetch(self,page = 1,format= None,**kwargs):
         if page <= 0:
             page = 1
         if page >= 251:
             page = 250 
-        url = self.get_formated_url(page=page,type_= type_) 
+        url = self.get_formated_url(page=page,format=format) 
         if kwargs.get("url"):
             url =kwargs.pop("url")
-            result = self.result(soup=self.request(url),child=True)
+            result = self.result(soup=self.request(url),child=True,format=format)
         else:
-            result = self.result(self.request(url))
+            result = self.result(soup=self.request(url),format=format)
 
-    def parse_child_soup (self,child_soup):
+    def parse_child_soup (self,child_soup,format=None):
         return "All items in child page(child_result)"
 
     def parse_parent_soup(self,parent_soup):
@@ -61,14 +60,15 @@ class RootFetch():
         return "All items in parent page(parent results)"
         
 
-    def result(self,soup,child=False):
+    def result(self,soup,child=False,format=None):
         if child:
-            child_result = self.parse_child_soup(soup)
+            child_result = self.parse_child_soup(soup,format=format)
         else:    
-            parent_result =self.parse_parent_soup(soup)#artist_name,title,(link)-----title,artist_name,art_link,(link)
+            parent_result =self.parse_parent_soup(soup)
             for child in parent_result:
-                child_soup = self.request(child['link'])
-                child_result = self.parse_child_soup(child_soup)#album_art,download_link-------download_link
+                #child_soup = self.request(child['link'])
+                child_soup = self.request(child)
+                child_result = self.parse_child_soup(child_soup,format=format)
             
 
 
