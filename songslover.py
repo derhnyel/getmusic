@@ -74,7 +74,8 @@ class Fetch(RootFetch):
         else:
             regex_group = [
                 soup.find(text = re.compile('.*(Save).*(Link)$')),soup.find(text = re.compile('.*(Save).*(Link).*(Server){1}.*(2){1}$')),
-                soup.find(text = re.compile('.*(Download)$')),soup.find(text = re.compile('.*(Download).*(This){1}.*(Track){1}$')),soup.find(text = re.compile('.*(Save).*(File)$')),
+                soup.find(text = re.compile('.*(Download)$')),soup.find(text = re.compile('.*(Download).*(This){1}.*(Track){1}$')),
+                soup.find(text = re.compile('.*(Save).*(File)$')),
             ]
             valid_group = list(i for i in regex_group if i!=None)
             if len(valid_group)>=1:
