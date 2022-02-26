@@ -3,13 +3,13 @@ from root import RootFetch
 
 
 class Fetch(RootFetch):
-    engine_name = "Songslover"
-    page_path = "page"
-    tracks_category = "category"
+    engine_name = 'Songslover'
+    page_path = 'page'
+    tracks_category = 'category'
 
     def __init__(self):
         super().__init__()
-        self.site_uri  = "https://songslover.vip/"
+        self.site_uri  = 'https://songslover.vip/'
 
     
     def get_url_path(self,page=None,category=None):
@@ -57,7 +57,17 @@ class Fetch(RootFetch):
                 try:
                     song_link = element['href']
                     song_title = element.text
-                    keywords=['Server','Apple Store','Amazon Store','Youtube','Apple Music','ITunes','Amazon Music','Buy Album',"Download Album"]
+                    keywords = [
+                        'Server',
+                        'Apple Store',
+                        'Amazon Store',
+                        'Youtube',
+                        'Apple Music',
+                        'ITunes',
+                        'Amazon Music',
+                        'Buy Album',
+                        'Download Album',
+                        ]
                     keyword=[i for i in keywords if i in song_title]
                     if any(keyword):
                         continue
