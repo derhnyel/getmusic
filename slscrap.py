@@ -65,6 +65,8 @@ def get_tracks(url):
     #             return None        
     #REFACTOR LINE 58 - 83
     if mode == "track":
+        #USE REGEX TO SEARCH 
+        "Download,Save Link, Save Link Server 2,Download This Track----page 295"
         try:
             download_link = dom.xpath('//*[@id="the-post"]/div/div[2]/p[3]/strong/a/@href')[0]
         except:
@@ -89,7 +91,7 @@ def get_tracks(url):
         if download_link.endswith(".htm") or download_link.endswith(".html"):  
             return None                 
         return art_link,download_link
-    #REFACTOR ....TOO MANY TRY / EXCEPTS LINE 84-113
+    #REFACTOR ....TOO MANY TRY / EXCEPTS LINE 84-113 ______USE A REGEX TO Check For WORD LIKE [All,in,One,Server,2]
     else:
         try:
             download_link = dom.xpath('//*[@id="the-post"]/div/div[2]/p[5]/strong/a/@href')[0]
@@ -160,3 +162,22 @@ for i in range(1,255):
    print('_________________________________Page : '+str(i)+'__________________________________________________')
    url_albums = "https://songslover.vip/albums/page/"+str(i)
    fetch_details(url_albums)
+
+
+
+
+        #result = [] #use enum/dict object generator
+        #soup_elements = soup.select('article h2 a')
+        #for element in soup_elements:
+            #temp_result = {}
+            # try:
+            #     artist,title=element.text.split(' –')
+            # except: 
+            #     title = artist = element.text
+            # artist = artist.strip()
+            # title = title.strip()     
+            # link = element['href']
+            # temp_result['artist']=artist 
+            # temp_result['title']=title
+            # temp_result['link']= link
+            # result.append(temp_result)
