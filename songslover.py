@@ -55,8 +55,10 @@ class Fetch(RootFetch):
                 return None
             for element in response_elements:
                 try:
-                    song_link = element['href']
                     song_title = element.text
+                    if song_title is None:
+                        continue
+                    song_link = element['href']
                     keywords = [
                         'Server',
                         'Apple Store',
@@ -68,16 +70,14 @@ class Fetch(RootFetch):
                         'Buy Album',
                         'Download Album',
                         ]
-                    keyword=[i for i in keywords if i in song_title]
-                    if any(keyword):
+                    keyword = [i for i in keywords if i in song_title]
+                    if any(keyword) :
                         continue
-                    elif song_title is None:
-                        continue  
                     elif song_title.startswith('Download'):
-                    song_title=song_title[8:] 
-                    songs_collection.append((song_title,song_link))
+                        song_title=song_title[8:] 
                 except Exception:
                     pass
+            return    
         else:
             regex_group = [
                 soup.find(text = re.compile('.*(Save).*(Link)$')),
