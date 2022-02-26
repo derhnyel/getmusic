@@ -25,7 +25,7 @@ class Fetch(RootFetch):
         header_elem = soup.select('div[class="mpostheader"] span[class="h1"]')[0]
         try:
             download_link = soup.select('p[class="song-download"] a')[0]['href']
-        except:
+        except Exception:
             download_link = None        
         art_link= soup.select('figure[class="song-thumbnail"] img')[0]['src']
         if category == "albums":    
