@@ -42,10 +42,8 @@ class Fetch(RootFetch):
             except Exception:
                 download_link = None
             response_group = [
-            soup.select('li strong a'), 
-            soup.select('p span strong a'),
-            soup.select('tr td div[class="wpmd"] a'),
-            soup.select('span[style="color: #99cc00;"] a'),
+            soup.select('li strong a'),soup.select('p span strong a'),
+            soup.select('tr td div[class="wpmd"] a'),soup.select('span[style="color: #99cc00;"] a'),
             soup.select('span[style="color: #ff99cc;"] a'),
             ]
             valid_group = list(i for i in response_group if i!=[])
@@ -60,15 +58,10 @@ class Fetch(RootFetch):
                         continue
                     song_link = element['href']
                     keywords = [
-                        'Server',
-                        'Apple Store',
-                        'Amazon Store',
-                        'Youtube',
-                        'Apple Music',
-                        'ITunes',
-                        'Amazon Music',
-                        'Buy Album',
-                        'Download Album',
+                        'Server','Youtube',
+                        'Apple Store','Apple Music','ITunes',
+                        'Amazon Music','Amazon Store',
+                        'Buy Album','Download Album',
                         ]
                     keyword = [i for i in keywords if i in song_title]
                     if any(keyword) :
@@ -80,11 +73,8 @@ class Fetch(RootFetch):
             return    
         else:
             regex_group = [
-                soup.find(text = re.compile('.*(Save).*(Link)$')),
-                soup.find(text = re.compile('.*(Save).*(Link).*(Server){1}.*(2){1}$')),
-                soup.find(text = re.compile('.*(Download)$')),
-                soup.find(text = re.compile('.*(Download).*(This){1}.*(Track){1}$')),
-                soup.find(text = re.compile('.*(Save).*(File)$')),
+                soup.find(text = re.compile('.*(Save).*(Link)$')),soup.find(text = re.compile('.*(Save).*(Link).*(Server){1}.*(2){1}$')),
+                soup.find(text = re.compile('.*(Download)$')),soup.find(text = re.compile('.*(Download).*(This){1}.*(Track){1}$')),soup.find(text = re.compile('.*(Save).*(File)$')),
             ]
             valid_group = list(i for i in regex_group if i!=None)
             if len(valid_group)>=1:
