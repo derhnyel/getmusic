@@ -19,15 +19,15 @@ def fetch_details(uri,track=False):
     soup = bs4(webpage.content, "html.parser")
     soup_elements = soup.select('article h2')
     for element in soup_elements:
-        try:
-            artist_name,title=element.text.split(' –')
-        except: 
-            title = artist_name = element.text
-        artist_name=artist_name.strip()
-        title = title.strip()     
+        # try:
+        #     artist_name,title=element.text.split(' –')
+        # except: 
+        #     title = artist_name = element.text
+        # artist_name=artist_name.strip()
+        # title = title.strip()     
         url = element.a['href']
         #(artist_name,title,url)
-        print("Artist Name: %s , Album/Track Title: %s"%(artist_name,title))
+        #print("Artist Name: %s , Album/Track Title: %s"%(artist_name,title))
         if track:
             mode = 'track'
             song_details= get_tracks(url)
@@ -45,17 +45,24 @@ def get_tracks(url):
     response = requests.get(url, headers={"User-Agent": UAgent.random})
     response_soup=bs4(response.text,"html.parser")
     dom = etree.HTML(str(response_soup))
-    #REFACTOR LINE 48-57
     try:
-        art_link=response_soup.figure.img['src']
+        artist,title = response.select('div[class="post-inner"] h1 span[itemprop="name"]').text.split(' –')
+        artist,title = artist.strip(),title.strip() 
     except:
-        try:
-            art_link= response_soup.select('div[class="entry"] p img[src]')[0]['src']
-        except:
-            try:
-                art_link= response_soup.select('div[class="entry"] h2 img[src]')[0]['src']
-            except:
-                return None        
+        artist=title=response.select('div[class="post-inner"] h1 span[itemprop="name"]').text        
+    art_link = response_soup.select('div[class="entry"] img[src]')[0]['src']
+    print("Artist Name: %s , Album/Track Title: %s"%(artist,title))
+    #REFACTOR LINE 48-57
+    # try:
+    #     art_link=response_soup.figure.img['src']
+    # except:
+    #     try:
+    #         art_link= response_soup.select('div[class="entry"] p img[src]')[0]['src']
+    #     except:
+    #         try:
+    #             art_link= response_soup.select('div[class="entry"] h2 img[src]')[0]['src']
+    #         except:
+    #             return None        
     #REFACTOR LINE 58 - 83
     if mode == "track":
         try:

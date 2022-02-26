@@ -26,7 +26,7 @@ class Fetch(RootFetch):
             artist = artist.strip()
             title = title.strip()     
             link = element.a['href']
-            temp_result['artist']=artist
+            temp_result['artist']=artist 
             temp_result['title']=title
             temp_result['link']= link
             result.append(temp_result)
