@@ -18,7 +18,7 @@ class RootFetch():
         return self.formated_url.geturl()
     
     def get_url_paths(self, query=None, page=None, offset=None, **kwargs):
-        return  """ This  function should be overwritten """
+        return  """ get url paths """
    
     def get_header(self):
         headers = {
@@ -49,11 +49,11 @@ class RootFetch():
             result = self.result(soup=self.request(url),category=category)
 
     def parse_child_soup (self,child_soup,category=None):
-        return "All items in child page(child_result)"
+        return "All details in child soup (child_result)"
 
     def parse_parent_soup(self,parent_soup):
         
-        return "All items in parent page(parent results)"
+        return " children urls(links)"
         
 
     def result(self,soup,child=False,category=None):
@@ -62,7 +62,6 @@ class RootFetch():
         else:    
             parent_result =self.parse_parent_soup(soup)
             for child in parent_result:
-                #child_soup = self.request(child['link'])
                 child_soup = self.request(child)
                 child_result = self.parse_child_soup(child_soup,category=category)
             
