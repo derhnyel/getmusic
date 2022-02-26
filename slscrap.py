@@ -3,6 +3,7 @@ from lxml import etree
 import requests
 from bs4 import BeautifulSoup as bs4 
 from fake_useragent import UserAgent
+import re
 
 UAgent = UserAgent()
 mode = None
@@ -41,16 +42,19 @@ def fetch_details(uri,track=False):
             
 
 def get_tracks(url):
-    time.sleep(0.1) 
+    #time.sleep(0.1) 
     response = requests.get(url, headers={"User-Agent": UAgent.random})
     response_soup=bs4(response.text,"html.parser")
-    dom = etree.HTML(str(response_soup))
+    #dom = etree.HTML(str(response_soup))
     try:
-        artist,title = response.select('div[class="post-inner"] h1 span[itemprop="name"]').text.split(' –')
+        artist,title = response_soup.select('div[class="post-inner"] h1 span[itemprop="name"]')[0].text.split(' –')
         artist,title = artist.strip(),title.strip() 
+    except Exception:
+        artist=title=response_soup.select('div[class="post-inner"] h1 span[itemprop="name"]')[0].text        
+    try:
+        art_link = response_soup.select('div[class="entry"] img[src]')[0]['src']
     except:
-        artist=title=response.select('div[class="post-inner"] h1 span[itemprop="name"]').text        
-    art_link = response_soup.select('div[class="entry"] img[src]')[0]['src']
+        art_link=None    
     print("Artist Name: %s , Album/Track Title: %s"%(artist,title))
     #REFACTOR LINE 48-57
     # try:
@@ -66,71 +70,115 @@ def get_tracks(url):
     #REFACTOR LINE 58 - 83
     if mode == "track":
         #USE REGEX TO SEARCH 
-        "Download,Save Link, Save Link Server 2,Download This Track----page 295"
-        try:
-            download_link = dom.xpath('//*[@id="the-post"]/div/div[2]/p[3]/strong/a/@href')[0]
-        except:
-            try:
-                download_link = dom.xpath('//*[@id="the-post"]/div/div[2]/p[2]/span/a/@href')[0] 
-            except:
-                try:
-                    download_link = dom.xpath('//*[@id="the-post"]/div/div[2]/p[2]/span/strong/a/@href')[0] 
-                except:
-                    try:
-                        download_link = dom.xpath('//*[@id="the-post"]/div/div[2]/p[2]/strong/a/@href')[0]
-                    except:
-                        try:
-                            download_link = dom.xpath('//*[@id="the-post"]/div/div[2]/h2/span/a/@href')[0] 
-                        except:
-                            try:
-                                download_link = response_soup.find(string= "Save Link").find_previous('a')['href']
-                            except:
-                                download_link = dom.xpath('//*[@id="the-post"]/div/div[2]/p[2]/a/@href')[0] 
+        #"Download,Save Link, Save Link Server 2,Download This Track ---- page 295"
+        #re.compile(r'(.*(Save).*(Link).*(Server){,1}.*(2){,1}.*)*(.*(Download).*(This){,1}.*(Track){,1}.*)')
+        regex_group = [
+
+            response_soup.find(text = re.compile('.*(Save).*(Link)$')),
+            response_soup.find(text = re.compile('.*(Save).*(Link).*(Server){1}.*(2){1}$')),
+            response_soup.find(text = re.compile('.*(Download)$')),
+            response_soup.find(text = re.compile('.*(Download).*(This){1}.*(Track){1}$')),
+            response_soup.find(text = re.compile('.*(Save).*(File)$')),
+
+        ]
+        #,response_soup.find(text = re.compile('.*(Save).*(File).*(Server){1}.*(2){1}$')))
+        valid_group = list(i for i in regex_group if i!=None)
+        if len(valid_group)>=1:
+            download_link = valid_group[0].find_previous('a')['href']
+        else:
+            download_link = None    
+        # print(check)
+        # if any(check):
+            #index = check.index(True)
+            #download_link = reg[index].find_previous('a')['href']
+        # else:
+            #download_link = None    
+
+
+        #download_link = response_soup.find_all(text = re.compile('.*(Save).*(Link).*(Server){,1}.*(2){,1}.*')).find_previous('a')['href']
+        # try:
+        #     download_link = dom.xpath('//*[@id="the-post"]/div/div[2]/p[3]/strong/a/@href')[0]
+        # except:
+        #     try:
+        #         download_link = dom.xpath('//*[@id="the-post"]/div/div[2]/p[2]/span/a/@href')[0] 
+        #     except:
+        #         try:
+        #             download_link = dom.xpath('//*[@id="the-post"]/div/div[2]/p[2]/span/strong/a/@href')[0] 
+        #         except:
+        #             try:
+        #                 download_link = dom.xpath('//*[@id="the-post"]/div/div[2]/p[2]/strong/a/@href')[0]
+        #             except:
+        #                 try:
+        #                     download_link = dom.xpath('//*[@id="the-post"]/div/div[2]/h2/span/a/@href')[0] 
+        #                 except:
+        #                     try:
+        #                         download_link = response_soup.find(string= "Save Link").find_previous('a')['href']
+        #                     except:
+        #                         download_link = dom.xpath('//*[@id="the-post"]/div/div[2]/p[2]/a/@href')[0] 
         print("Track Art : " ,art_link)
         print("Track Download Link : " ,download_link)
-        if download_link.endswith(".htm") or download_link.endswith(".html"):  
-            return None                 
+        # if download_link.endswith(".htm") or download_link.endswith(".html"):  
+        #     return None                 
         return art_link,download_link
     #REFACTOR ....TOO MANY TRY / EXCEPTS LINE 84-113 ______USE A REGEX TO Check For WORD LIKE [All,in,One,Server,2]
     else:
         try:
-            download_link = dom.xpath('//*[@id="the-post"]/div/div[2]/p[5]/strong/a/@href')[0]
+            download_link = response_soup.find(text = re.compile(".*(All).*(in).*(One).*(Server).*(2).*")).find_previous("a")['href']
         except:
-            try:
-                download_link=response_soup.select('div span[class="ws12"] a')[1]['href']
-            except:
-                try:
-                    download_link = response_soup.find(string='Download All in One Server 2').find_previous('a')['href']
-                except:
-                    try:
-                       download_link = response_soup.find(string= "Download All in One (Server 2)").find_previous('a')['href'] 
-                    except:
-                        try:
-                            download_link = response_soup.find(string= "All in One – ( Zip File ) Server 2").find_previous('a')['href']   
-                        except:
-                            try:
-                                download_link = response_soup.find(string= "Download All in One Server From 2").find_previous('a')['href'] 
-                            except:
-                                try:
-                                    download_link = response_soup.find(string= "Download All in One zip Server 2").find_previous('a')['href']    
-                                except:
-                                    download_link=".html"         
-        if download_link.endswith(".htm") or download_link.endswith(".html"):
-            try:
-                download_link = dom.xpath('//*[@id="the-post"]/div/div[2]/p[6]/strong/a/@href')[0]
-            except:
-                download_link=None
+            download_link = None    
+        # try:
+        #     download_link = dom.xpath('//*[@id="the-post"]/div/div[2]/p[5]/strong/a/@href')[0]
+        # except:
+        #     try:
+        #         download_link=response_soup.select('div span[class="ws12"] a')[1]['href']
+        #     except:
+        #         try:
+        #             download_link = response_soup.find(string='Download All in One Server 2').find_previous('a')['href']
+        #         except:
+        #             try:
+        #                download_link = response_soup.find(string= "Download All in One (Server 2)").find_previous('a')['href'] 
+        #             except:
+        #                 try:
+        #                     download_link = response_soup.find(string= "All in One – ( Zip File ) Server 2").find_previous('a')['href']   
+        #                 except:
+        #                     try:
+        #                         download_link = response_soup.find(string= "Download All in One Server From 2").find_previous('a')['href'] 
+        #                     except:
+        #                         try:    
+        #                             download_link = response_soup.find(string= "Download All in One zip Server 2").find_previous('a')['href']    
+        #                         except:
+        #                             download_link=".html"         
+        # if download_link.endswith(".htm") or download_link.endswith(".html"):
+        #     try:
+        #         download_link = dom.xpath('//*[@id="the-post"]/div/div[2]/p[6]/strong/a/@href')[0]
+        #     except:
+        #         download_link=None
     #REFACTOR RESPONSE ELEMENT CODE BLOCK***THIS IS FOR TESTING PURPOSE ONLY*** LINE 116-124                              
-    response_elements = response_soup.select('li strong a')
-    if response_elements==[]:
-       response_elements = response_soup.select('p span strong a')
-    if response_elements==[]:
-        response_elements = response_soup.select('tr td div[class="wpmd"] a')    
-    if response_elements==[]:
-       response_elements = response_soup.select('span[style="color: #99cc00;"] a')
-    if response_elements==[]:
-        response_elements = response_soup.select('span[style="color: #ff99cc;"] a')
-              
+    # response_elements = response_soup.select('li strong a')
+    # if response_elements==[]:
+    #    response_elements = response_soup.select('p span strong a')
+    # if response_elements==[]:
+    #     response_elements = response_soup.select('tr td div[class="wpmd"] a')    
+    # if response_elements==[]:
+    #    response_elements = response_soup.select('span[style="color: #99cc00;"] a')
+    # if response_elements==[]:
+    #     response_elements = response_soup.select('span[style="color: #ff99cc;"] a')
+
+    response_group = [
+
+        response_soup.select('li strong a'), 
+        response_soup.select('p span strong a'),
+        response_soup.select('tr td div[class="wpmd"] a'),
+        response_soup.select('span[style="color: #99cc00;"] a'),
+        response_soup.select('span[style="color: #ff99cc;"] a'),
+    
+    ]
+
+    valid_group = list(i for i in response_group if i!=[])
+    if len(valid_group)>=1:
+        response_elements = valid_group[0]
+    else:
+        return None                
     print("Album Art Link : " ,art_link)
     print("Album Download Link : " ,download_link)   
     songs_collection=[]
@@ -158,10 +206,10 @@ def get_tracks(url):
     #print(songs_collection)
     return art_link,download_link,songs_collection,      
 
-for i in range(1,255):
+for i in range(198,215):
    print('_________________________________Page : '+str(i)+'__________________________________________________')
-   url_albums = "https://songslover.vip/albums/page/"+str(i)
-   fetch_details(url_albums)
+   url_albums = "https://songslover.vip/category/tracks/page/"+str(i)
+   fetch_details(url_albums,track=True)
 
 
 
