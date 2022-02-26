@@ -11,9 +11,9 @@ class RootFetch():
     site_uri = None
     
 
-    def get_formated_url(self,page=None,format=None):
+    def get_formated_url(self,page=None,category=None):
         url = urlparse(self.site_uri)
-        url_path = helpers.join_url_path(self.get_url_paths(page,format))
+        url_path = helpers.join_url_path(self.get_url_paths(page,category))
         self.formated_url = url._replace(path=url_path)
         return self.formated_url.geturl()
     
@@ -40,19 +40,15 @@ class RootFetch():
         loop = asyncio.get_event_loop()       
         return loop.run_until_complete(self.get_soup_object(url))
     
-    def fetch(self,page = 1,format= None,**kwargs):
-        if page <= 0:
-            page = 1
-        if page >= 251:
-            page = 250 
-        url = self.get_formated_url(page=page,format=format) 
+    def fetch(self,page = 1,category= None,**kwargs):
+        url = self.get_formated_url(page=page,category=category) 
         if kwargs.get("url"):
             url =kwargs.pop("url")
-            result = self.result(soup=self.request(url),child=True,format=format)
+            result = self.result(soup=self.request(url),child=True,category=category)
         else:
-            result = self.result(soup=self.request(url),format=format)
+            result = self.result(soup=self.request(url),category=category)
 
-    def parse_child_soup (self,child_soup,format=None):
+    def parse_child_soup (self,child_soup,category=None):
         return "All items in child page(child_result)"
 
     def parse_parent_soup(self,parent_soup):
@@ -60,15 +56,15 @@ class RootFetch():
         return "All items in parent page(parent results)"
         
 
-    def result(self,soup,child=False,format=None):
+    def result(self,soup,child=False,category=None):
         if child:
-            child_result = self.parse_child_soup(soup,format=format)
+            child_result = self.parse_child_soup(soup,category=category)
         else:    
             parent_result =self.parse_parent_soup(soup)
             for child in parent_result:
                 #child_soup = self.request(child['link'])
                 child_soup = self.request(child)
-                child_result = self.parse_child_soup(child_soup,format=format)
+                child_result = self.parse_child_soup(child_soup,category=category)
             
 
 
