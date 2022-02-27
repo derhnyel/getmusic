@@ -9,7 +9,7 @@ GET REQUEST to https://mp3quack.app/mp3/your-query or https://mp3quack.app/?q=yo
 Nopayload
 
 GET REQUEST to https://line.1010diy.com/web/free-mp3-finder/query?q=your+query&type=youtube&pageToken=
-payload={'q': your_query ,'type':'youtube','pageToken':None} 
+payload = {'q': your_query ,'type':'youtube','pageToken':None} 
 
 POST REQUEST to https://tubidy.dj/ 
 payload = {'q':your_query}
