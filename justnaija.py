@@ -21,7 +21,7 @@ class Fetch(RootFetch):
         return list(elem['href'] for elem in soup.select("main article h3 a"))
 
 
-    def parse_child_soup(soup,category=None):
+    def parse_child_result(soup,category=None):
         header_elem = soup.select('div[class="mpostheader"] span[class="h1"]')[0]
         try:
             download_link = soup.select('p[class="song-download"] a')[0]['href']
