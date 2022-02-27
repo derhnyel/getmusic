@@ -25,7 +25,7 @@ class Fetch(RootFetch):
     
     
     
-    def parse_child_soup(soup,category=None):
+    def parse_child_result(soup,category=None):
         try:
             artist,title = soup.select('div[class="post-inner"] h1 span[itemprop="name"]')[0].text.split(' –')
             artist,title = artist.strip(),title.strip() 
