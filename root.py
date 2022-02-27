@@ -62,8 +62,7 @@ class RootFetch():
         else:    
             parent_result =self.parse_parent_soup(soup)
             for child in parent_result:
-                child_soup = self.request(child)
-                child_result = self.parse_child_soup(child_soup,category=category)
+                child_result = self.parse_child_soup(self.request(child),category=category)
             
 
 
