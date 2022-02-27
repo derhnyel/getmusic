@@ -47,10 +47,9 @@ class Fetch(RootFetch):
             soup.select('span[style="color: #ff99cc;"] a'),
             ]
             valid_group = list(i for i in response_group if i!=[])
-            if len(valid_group)>=1:
-                response_elements = valid_group[0]
-            else:
+            if len(valid_group)<=0:
                 return None
+            response_elements = valid_group[0]
             for element in response_elements:
                 try:
                     song_title = element.text
@@ -71,18 +70,16 @@ class Fetch(RootFetch):
                 except Exception:
                     pass
             return    
-        else:
-            regex_group = [
-                soup.find(text = re.compile('.*(Save).*(Link)$')),soup.find(text = re.compile('.*(Save).*(Link).*(Server){1}.*(2){1}$')),
-                soup.find(text = re.compile('.*(Download)$')),soup.find(text = re.compile('.*(Download).*(This){1}.*(Track){1}$')),
-                soup.find(text = re.compile('.*(Save).*(File)$')),
-            ]
-            valid_group = list(i for i in regex_group if i!=None)
-            if len(valid_group)>=1:
-                download_link = valid_group[0].find_previous('a')['href']
-            else:
-                download_link = None
-            return    
+        regex_group = [
+            soup.find(text = re.compile('.*(Save).*(Link)$')),soup.find(text = re.compile('.*(Save).*(Link).*(Server){1}.*(2){1}$')),
+            soup.find(text = re.compile('.*(Download)$')),soup.find(text = re.compile('.*(Download).*(This){1}.*(Track){1}$')),
+            soup.find(text = re.compile('.*(Save).*(File)$')),
+        ]
+        valid_group = list(i for i in regex_group if i!=None)
+        if len(valid_group)>=1:
+            download_link = valid_group[0].find_previous('a')['href']
+        download_link = None
+        return    
 
 
 
