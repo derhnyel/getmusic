@@ -82,6 +82,7 @@ class Fetch(RootFetch):
                 download_link = valid_group[0].find_previous('a')['href']
             else:
                 download_link = None
+            return    
 
 
 
