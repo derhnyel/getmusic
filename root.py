@@ -42,11 +42,10 @@ class RootFetch():
     
     def fetch(self,page = 1,category= None,**kwargs):
         url = self.get_formated_url(page=page,category=category) 
+        result = self.result(soup=self.request(url),category=category)
         if kwargs.get("url"):
             url =kwargs.pop("url")
             result = self.result(soup=self.request(url),child=True,category=category)
-        else:
-            result = self.result(soup=self.request(url),category=category)
 
     def parse_child_soup (self,child_soup,category=None):
         return "All details in child soup (child_result)"
@@ -58,11 +57,10 @@ class RootFetch():
 
     def result(self,soup,child=False,category=None):
         if child:
-            child_result = self.parse_child_soup(soup,category=category)
-        else:    
-            parent_result =self.parse_parent_soup(soup)
-            for child in parent_result:
-                child_result = self.parse_child_soup(self.request(child),category=category)
+            child_result = self.parse_child_soup(soup,category=category)   
+        parent_result =self.parse_parent_soup(soup)
+        for child in parent_result:
+            child_result = self.parse_child_soup(self.request(child),category=category)
             
 
 
