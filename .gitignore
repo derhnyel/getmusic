@@ -1,0 +1,10 @@
+.pytest_cache/
+**/__pycache__
+/bin/
+*.exe
+*.exe~
+**/jnscrap.py
+**/slscrap.py
+*jnscrap.py
+*slscrap.py
+.vscode
