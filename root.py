@@ -3,22 +3,22 @@ import helpers
 from urllib.parse import urlparse
 import asyncio
 from bs4 import BeautifulSoup as bs4
+from abc import ABCMeta,abstractmethod
 
 class RootFetch():
-
+    __metaclass__ = ABCMeta
     items = {}
     formated_url = None
     site_uri = None
     
-
+    
     def get_formated_url(self,page=None,category=None):
         url = urlparse(self.site_uri)
         url_path = helpers.join_url_path(self.get_url_paths(page,category))
         self.formated_url = url._replace(path=url_path)
         return self.formated_url.geturl()
     
-    def get_url_paths(self, query=None, page=None, offset=None, **kwargs):
-        return  """ get url paths """
+
    
     def get_header(self):
         headers = {
@@ -44,23 +44,33 @@ class RootFetch():
         url = self.get_formated_url(page=page,category=category) 
         result = self.result(soup=self.request(url),category=category)
         if kwargs.get("url"):
-            url =kwargs.pop("url")
+            url = kwargs.pop("url")
             result = self.result(soup=self.request(url),child=True,category=category)
-
-    def parse_child_soup (self,child_soup,category=None):
-        return "All details in child soup (child_result)"
-
+    
+    @abstractmethod
+    def parse_child_result(self,child_soup,category=None):
+        raise NotImplementedError(
+            "subclasses must define method <parse_child_result>")
+        #return "All details in child soup (child_result)"
+   
+    @abstractmethod
     def parse_parent_soup(self,parent_soup):
-        
-        return " children urls(links)"
+        raise NotImplementedError(
+            "subclasses must define method <parse_parent_soup>")
+        #return " Children urls(links)"
+    
+    @abstractmethod
+    def get_url_paths(self, page=None,category=None):
+        raise NotImplementedError(
+            "subclasses must define method <get_url_paths>")
+        #return  """ get url paths """    
         
 
     def result(self,soup,child=False,category=None):
         if child:
-            child_result = self.parse_child_soup(soup,category=category)   
-        parent_result =self.parse_parent_soup(soup)
-        for child in parent_result:
-            child_result = self.parse_child_soup(self.request(child),category=category)
+            child_result = self.parse_child_result(soup,category=category)   
+        for infant in self.parse_parent_soup(soup):
+            child_result = self.parse_child_result(self.request(infant),category=category)
             
 
 
