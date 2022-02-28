@@ -1,4 +1,5 @@
 from root import RootFetch
+import re
 #from lxml import etree
 
 
@@ -10,7 +11,7 @@ class Fetch(RootFetch):
     def __init__(self):
         super().__init__()
         self.site_uri  = 'https://songslover.vip/'
-
+        self.request_method='GET'
     
     def get_url_path(self,page=None,category=None):
         if page <= 0:
@@ -19,13 +20,10 @@ class Fetch(RootFetch):
             page = 250        
         return (category,self.page_path,page) if category=="albums" else (self.tracks_category,category,self.page_path,page)
 
+    def parse_parent_soap(soup,**kwargs):
+        return list(elem['href'] for elem in soup.select('article h2 a'))    
     
-    def parse_parent_soap(soup):
-        return list(elem['href'] for elem in soup.select('article h2 a'))
-    
-    
-    
-    def parse_child_result(soup,category=None):
+    def parse_child_result(soup,category=None,**kwargs):
         try:
             artist,title = soup.select('div[class="post-inner"] h1 span[itemprop="name"]')[0].text.split(' –')
             artist,title = artist.strip(),title.strip() 
@@ -35,7 +33,6 @@ class Fetch(RootFetch):
             art_link = soup.select('div[class="entry"] img[src]')[0]['src']
         except Exception:
             art_link = None
-
         if category=="albums":
             try:
                 download_link = soup.find(text = re.compile(".*(All).*(in).*(One).*(Server).*(2).*")).find_previous("a")['href']
@@ -66,7 +63,7 @@ class Fetch(RootFetch):
                     if any(keyword) :
                         continue
                     elif song_title.startswith('Download'):
-                        song_title=song_title[8:] 
+                        song_title = song_title[8:] 
                 except Exception:
                     pass
             return    
@@ -76,7 +73,7 @@ class Fetch(RootFetch):
             soup.find(text = re.compile('.*(Save).*(File)$')),
         ]
         valid_group = list(i for i in regex_group if i!=None)
-        if len(valid_group)>=1:
+        if len(valid_group) >= 1:
             download_link = valid_group[0].find_previous('a')['href']
         download_link = None
         return    
