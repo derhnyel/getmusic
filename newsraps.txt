@@ -1,19 +1,26 @@
 GET REQUEST to https://backendace.1010diy.com/web/free-mp3-finder/query?q=your+query&type=youtube&pageToken=
 payload = {'q':your_query,'type':'youtube','pageToken':None} 
 
-
 GET REQUEST to https://mp3-juice.com/api.php?q=your%20query
 payload = {'q':your_query}
+
+GET REQUEST to https://line.1010diy.com/web/free-mp3-finder/query?q=your+query&type=youtube&pageToken=
+payload = {'q': your_query ,'type':'youtube','pageToken':None} 
 
 GET REQUEST to https://mp3quack.app/mp3/your-query or https://mp3quack.app/?q=your%20query
 Nopayload
 
-GET REQUEST to https://line.1010diy.com/web/free-mp3-finder/query?q=your+query&type=youtube&pageToken=
-payload = {'q': your_query ,'type':'youtube','pageToken':None} 
+GET REQUEST to https://your-query.myfreemp3.icu/
+Nopayload
 
 POST REQUEST to https://tubidy.dj/ 
 payload = {'q':your_query}
 
 POST REQUEST to https://www.mp3juices3.cc/ 
 payload = {'query':your_query}
+
+POST REQUEST to https://myfreemp3juices.cc/api/search.php?callback=jQuery21308878779260465037_1645999942802
+payload 
+*Query String Parameters = {'callback':'jQuery21308878779260465037_1645999942802'}
+*Form Data = {'q':your_query,page:0}
 
