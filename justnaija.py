@@ -11,6 +11,7 @@ class Fetch(RootFetch):
     def __init__(self):
         super().__init__()
         self.site_uri = 'https://justnaija.com/'
+        self.request_method= 'GET'
 
     def get_url_path(self,page=None,category=None):
         #if page
