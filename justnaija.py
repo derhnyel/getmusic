@@ -2,7 +2,7 @@ from root import RootFetch
 
 
 class Fetch(RootFetch):
-    engine_name = 'Justnaija'
+    engine_name = 'justnaija'
     page_path='page'
     album_path = 'album'
     album_category='music'
