@@ -4,7 +4,7 @@ import re
 
 
 class Fetch(RootFetch):
-    engine_name = 'Songslover'
+    engine_name = 'songslover'
     page_path = 'page'
     tracks_category = 'category'
 
@@ -17,8 +17,8 @@ class Fetch(RootFetch):
         if page <= 0:
             page = 1
         if page >= 251:
-            page = 250        
-        return (category,self.page_path,page) if category=="albums" else (self.tracks_category,category,self.page_path,page)
+            page = 250     
+        return (category,self.page_path,page) if category=='albums' else (self.tracks_category,category,self.page_path,page)
 
     def parse_parent_soap(soup,**kwargs):
         return list(elem['href'] for elem in soup.select('article h2 a'))    
