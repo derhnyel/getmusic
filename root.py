@@ -11,6 +11,7 @@ class RootFetch():
     formated_url = None
     site_uri = None
     request_method = None
+    response_type = None
     engine_name= None
     
     def get_formated_url(self,page=None,category=None,query=None,**kwargs):
