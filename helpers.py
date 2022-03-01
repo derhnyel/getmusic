@@ -39,13 +39,15 @@ def gen_user_agent():
     user_agent = random.choice(USER_AGENTS)
     try:
         user_agent = UserAgent().random
-    except:
+    except Exception:
        pass
     return user_agent
 
 def join_url_path(paths):
-    return ('/').join(paths)
-
+    try:
+        return ('/').join(paths)
+    except Exception:    
+        return
 class CacheHandler:
     def cache_fetched_items():
         return "Fetched results stored in a cache" 
