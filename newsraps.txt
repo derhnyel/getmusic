@@ -1,26 +1,53 @@
-GET REQUEST to https://backendace.1010diy.com/web/free-mp3-finder/query?q=your+query&type=youtube&pageToken=
+1. GET REQUEST to https://backendace.1010diy.com/web/free-mp3-finder/query?q=your+query&type=youtube&pageToken=
 payload = {'q':your_query,'type':'youtube','pageToken':None} 
+response_type = html
 
-GET REQUEST to https://mp3-juice.com/api.php?q=your%20query
+2. GET REQUEST to https://mp3-juice.com/api.php?q=your%20query
 payload = {'q':your_query}
+response_type = json
 
-GET REQUEST to https://line.1010diy.com/web/free-mp3-finder/query?q=your+query&type=youtube&pageToken=
-payload = {'q': your_query ,'type':'youtube','pageToken':None} 
+3. GET REQUEST to https://line.1010diy.com/web/free-mp3-finder/query?q=your+query&type=youtube&pageToken=
+payload = {'q': your_query ,'type':'youtube','pageToken':None}
+response_type = html 
 
-GET REQUEST to https://mp3quack.app/mp3/your-query or https://mp3quack.app/?q=your%20query
+4. GET REQUEST to https://mp3quack.app/mp3/your-query or https://mp3quack.app/?q=your%20query
 Nopayload
+response_type = html
 
-GET REQUEST to https://your-query.myfreemp3.icu/
+5. GET REQUEST to https://your-query.myfreemp3.icu/
 Nopayload
+response_type = html
 
-POST REQUEST to https://tubidy.dj/ 
+6. GET REQUEST to https://songslover.vip/?s=your%20query
+payload = {'s':your_query}
+response_type = html
+
+7. GET REQUEST to https://justnaija.com/search?q=your+query&folder={music,everywhere=None,album,video}
+payload = {'q':your_query,'folder':}
+
+8. POST REQUEST to https://tubidy.dj/ 
 payload = {'q':your_query}
+response_type = html
+** Send tid in html reponse script as a POST REQUEST to https://tubidy.dj/
+#fi for mp3, f2 for mp4
+payload = {'f1':tid}
+response_type=json
+response = {progress: "/dl.php?id=tid,status: "done"}
+** Send a GET REQUEST to https://tubidy.dj/response.progress
+response_type = html
+response = extract convertersbear url and make a get request
 
-POST REQUEST to https://www.mp3juices3.cc/ 
+9. POST REQUEST to https://www.mp3juices3.cc/ 
 payload = {'query':your_query}
 
-POST REQUEST to https://myfreemp3juices.cc/api/search.php?callback=jQuery21308878779260465037_1645999942802
+10. POST REQUEST to https://myfreemp3juices.cc/api/search.php?callback=jQuery21308878779260465037_1645999942802
 payload 
 *Query String Parameters = {'callback':'jQuery21308878779260465037_1645999942802'}
 *Form Data = {'q':your_query,page:0}
+response_type = json
+
+
+#### Muse Engine Optimisations
+**** Use aiohttp and ayncio for making concurrent requests.
+**** Child Soup optimisation to handle both json and soup objects.
 
