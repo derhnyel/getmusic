@@ -11,6 +11,7 @@ class RootFetch():
     formated_url = None
     site_uri = None
     request_method = None
+    engine_name= None
     
     def get_formated_url(self,page=None,category=None,query=None,**kwargs):
         url = urlparse(self.site_uri)
@@ -25,7 +26,8 @@ class RootFetch():
             "Connection": "keep-alive",
             "User-Agent": helpers.gen_user_agent()
         }
-        return headers        
+        return headers
+
     async def get_page_content(self,url):
         if self.request_method == "GET":
             #request url(GET)
@@ -48,12 +50,22 @@ class RootFetch():
             if kwargs.get("url"):
                 url = kwargs.pop("url")
                 result = self.result(soup=self.request(url),child=True,category=category)
-        
+    
+    def result(self,soup,child=False,category=None,**kwargs):
+        if child:
+            child_result = self.parse_child_result(soup,category=category,**kwargs)   
+        for infant in self.parse_parent_soup(soup):
+            child_result = self.parse_child_result(self.request(infant),category=category,**kwargs) 
     
     def get_query_params(self,query=None,**kwargs):
         """Should be overwritten if engine needs query params"""
         return {'q':query}
-    
+
+    def get_url_paths(self,page=None,category=None):
+        """Should be overwritten if engine needs url paths"""
+        return 
+        #return  """ get url paths """
+           
     @abstractmethod
     def parse_parent_soup(self,parent_soup):
         raise NotImplementedError(
@@ -65,18 +77,6 @@ class RootFetch():
         raise NotImplementedError(
             "subclasses must define method <parse_child_result>")
         #return "All details in child soup (child_result)"
-    
-    @abstractmethod
-    def get_url_paths(self, page=None,category=None):
-        raise NotImplementedError(
-            "subclasses must define method <get_url_paths>")
-        #return  """ get url paths """    
-        
-    def result(self,soup,child=False,category=None,**kwargs):
-        if child:
-            child_result = self.parse_child_result(soup,category=category,**kwargs)   
-        for infant in self.parse_parent_soup(soup):
-            child_result = self.parse_child_result(self.request(infant),category=category,**kwargs)
             
 
 
