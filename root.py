@@ -17,7 +17,7 @@ class RootFetch():
     response_type = None
     JSON = 'json'
     HTML = 'html'
-    
+
     def get_formated_url(self,page=None,category=None,query=None,method=None,**kwargs):
         url = urlparse(self.site_uri)
         url_path = helpers.join_url_path(self.get_url_path(page,category))
