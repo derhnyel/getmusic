@@ -13,6 +13,13 @@ response_type = html
 4. GET REQUEST to https://mp3quack.app/mp3/your-query or https://mp3quack.app/?q=your%20query
 Nopayload
 response_type = html
+extract_id from image art url from reponse html
+get request to https://ytmp3cut.com/extract_id
+response_type = html
+extract_song_title and parse it as a query from response html append it as a path add .mp3 to the end
+https://fr01-5.ytmp3cut.com/key/extract_song_title.mp3
+https://nl01-5.ytmp3cut.com/key/extract_song_title.mp3
+
 
 5. GET REQUEST to https://your-query.myfreemp3.icu/
 Nopayload
@@ -46,11 +53,9 @@ payload
 *Form Data = {'q':your_query,page:0}
 response_type = json
 
-
-Somelike https://gaana.com/
-Domain https://getmusic.live
-
 #### Muse Engine Optimisations
 **** Use aiohttp and ayncio for making concurrent requests.
 **** Child Soup optimisation to handle both json and soup objects.
 
+Somelike https://gaana.com/
+Domain https://getmusic.live
