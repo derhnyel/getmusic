@@ -11,19 +11,22 @@ class Fetch(RootFetch):
     def __init__(self):
         super().__init__()
         self.site_uri  = 'https://songslover.vip/'
-        self.request_method='GET'
-    
+        self.request_method = self.GET
+        self.reponse_type = self.HTML
+
+    """Implement to """
     def get_url_path(self,page=None,category=None):
-        if page <= 0:
+        if page <= 0 or page is None:
             page = 1
         if page >= 251:
             page = 250     
         return (category,self.page_path,page) if category=='albums' else (self.tracks_category,category,self.page_path,page)
-
-    def parse_parent_soap(soup,**kwargs):
+    
+    
+    def parse_parent(soup,**kwargs):
         return list(elem['href'] for elem in soup.select('article h2 a'))    
     
-    def parse_child_result(soup,category=None,**kwargs):
+    def parse_child_object(soup,category=None,**kwargs):
         try:
             artist,title = soup.select('div[class="post-inner"] h1 span[itemprop="name"]')[0].text.split(' –')
             artist,title = artist.strip(),title.strip() 

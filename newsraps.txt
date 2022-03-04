@@ -31,7 +31,7 @@ response_type = html
 ** Send tid in html reponse script as a POST REQUEST to https://tubidy.dj/
 #fi for mp3, f2 for mp4
 payload = {'f1':tid}
-response_type=json
+response_type = json
 response = {progress: "/dl.php?id=tid,status: "done"}
 ** Send a GET REQUEST to https://tubidy.dj/response.progress
 response_type = html
@@ -46,6 +46,9 @@ payload
 *Form Data = {'q':your_query,page:0}
 response_type = json
 
+
+Somelike https://gaana.com/
+Domain https://getmusic.live
 
 #### Muse Engine Optimisations
 **** Use aiohttp and ayncio for making concurrent requests.

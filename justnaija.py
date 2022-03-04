@@ -11,14 +11,15 @@ class Fetch(RootFetch):
     def __init__(self):
         super().__init__()
         self.site_uri = 'https://justnaija.com/'
-        self.request_method= 'GET'
+        self.request_method= self.GET
+        self.response_type = self.HTML
 
     def get_url_path(self,page=None,category=None):
         #if page
         return (self.album_category,self.album_path,self.page_path,page) if category=="albums" else (self.tracks_page_path,self.page_path,page)    
     
 
-    def parse_parent_soup(soup):
+    def parse_parent(soup):
         return list(elem['href'] for elem in soup.select("main article h3 a"))
 
 
