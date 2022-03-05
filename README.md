@@ -1,2 +1,2 @@
-# murphy
+# getmusic
  Music Aggregator Engine
