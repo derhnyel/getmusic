@@ -2,7 +2,7 @@ from root import RootSearch
 import re
 #from lxml import etree
 
-"""Figure out a way to combine both ftch and search"""
+"""Figure out a way to combine both fetch and search"""
 """Also find a way to differentiate between album and track children when using Search not Fetch"""
 class Fetch(RootSearch):
     engine_name = 'songslover'

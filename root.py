@@ -47,12 +47,21 @@ class RootSearch():
         #aiohttp request url (POST) with payload
         return "html/json object"    
           
-    async def get_object(self,url,method=None,payload=None):
-        source = await self.get_page_content(url,method=method)
-        """Set default else to html"""
-        if  self.response_type == self.HTML:
-            return bs4(source,'html')
-        """else a json object shoud be returned"""        
+    async def get_object(self,url=None,method=None,payload=None,html_page=None,json_object=None):
+        if url != None:
+            source = await self.get_page_content(url,method=method,payload=payload)
+            """Set default else to html"""
+            if  self.response_type == self.HTML:
+                return bs4(source,'html')
+            """else a json object shoud be returned unpacked""" 
+        elif html_page != None:
+               return bs4(html_page,'html')
+        elif json_object != None:
+            """unpack json """
+
+        else:
+            raise Exception ('ERROR: {}\n'.format("<get_object> requires either a url / html_page content / json object"))       
+
 
     def request(self,url,method=None,payload=None):
         loop = asyncio.get_event_loop()       
@@ -76,9 +85,14 @@ class RootSearch():
         #     child_result = self.parse_child_obejct(soup,category=category,**kwargs)   
         for child in self.parse_parent_object(object):
             if helpers.isvalid_url(child):
+                #self.request
                 result = self.parse_object(child,url=True)
             elif helpers.isvalid_json(child):
+                #self.get_object(html_page=child)
                 """Unpack Json data"""
+            elif isinstance(str,child):
+                #self.get_object(json_object=child)
+                """Parse str object as bs4 soup"""    
     
     def get_query_params(self,query=None,**kwargs):
         """Should be overwritten if engine needs query params"""

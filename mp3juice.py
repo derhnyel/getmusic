@@ -1,5 +1,5 @@
-from root import RootFetch
-class Fetch(RootFetch):
+from root import RootSearch
+class Search(RootSearch):
     engine_name = 'mp3juice'
     api_path = 'api.php'
 
@@ -7,7 +7,7 @@ class Fetch(RootFetch):
         super().__init__()
         self.site_uri  = 'https://mp3-juice.com/'
         self.request_method = self.GET
-        self.reponse_type = self.JSON
+        self.response_type = self.JSON
 
 
     def get_url_path(self,page=None,category=None):
