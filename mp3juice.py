@@ -13,6 +13,6 @@ class Fetch(RootFetch):
     def get_url_path(self,page=None,category=None):
         return (self.api_path)
 
-    def parse_child_object(object):    
+    def parse_object(object):    
         """Parse JSON OBJECT To extract download_links,arts,and song_titles"""
         return

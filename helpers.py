@@ -1,6 +1,11 @@
+from typing import Any
 from fake_useragent import UserAgent
 import random
-from urllib.parse import urljoin
+import validators
+from validators import ValidationFailure
+import json
+
+
 USER_AGENTS = [
     "Mozilla/5.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; AcooBrowser; .NET CLR 1.1.4322; .NET CLR 2.0.50727)",
     "Mozilla/5.0 (Windows; U; MSIE 9.0; Windows NT 9.0; en-US)",
@@ -35,7 +40,7 @@ USER_AGENTS = [
     'Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.1; WOW64; Trident/6.0)',
 ]
 
-def gen_user_agent():
+def gen_user_agent() -> str:
     user_agent = random.choice(USER_AGENTS)
     try:
         user_agent = UserAgent().random
@@ -43,11 +48,26 @@ def gen_user_agent():
        pass
     return user_agent
 
-def join_url_path(paths):
+def join_url_path(paths: str):
     try:
         return ('/').join(paths)
     except Exception:    
         return
+
+def isvalid_url(url: str) -> bool:
+    urlcheck = validators.url(url)
+    if isinstance(urlcheck, ValidationFailure):
+        return False
+    return urlcheck
+
+
+def isvalid_json(jsonData) -> bool:
+    try:
+        json.loads(jsonData)
+    except ValueError as err:
+        return False
+    return True
+
 class CacheHandler:
     def cache_fetched_items():
         return "Fetched results stored in a cache" 

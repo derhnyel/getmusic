@@ -4,19 +4,27 @@ from urllib.parse import urlparse,urlencode
 import asyncio
 from bs4 import BeautifulSoup as bs4
 from abc import ABCMeta,abstractmethod
+import json
 
-class RootFetch():
+# class Response:
+
+#     def __init__(self, data):
+#         self.__dict__ = json.loads(data)
+
+# response = Response(json_data)
+
+# if hasattr(response , 'url'):
+class RootSearch():
     __metaclass__ = ABCMeta
     items = {}
     engine_name= None
     formated_url = None
     site_uri = None
     request_method = None
-    GET = 'get'
-    POST = 'post'
+    GET,POST = 'get','post'
     response_type = None
-    JSON = 'json'
-    HTML = 'html'
+    JSON,HTML = 'json','html'
+    ALBUM,MUSIC,TRACK  = 'albums','music','tracks'
 
     def get_formated_url(self,page=None,category=None,query=None,method=None,**kwargs):
         url = urlparse(self.site_uri)
@@ -62,12 +70,15 @@ class RootFetch():
             #     result = self.result(soup=self.request(url,method=method),child=True,category=category)
         result = self.result(self.request(url,method=method,payload=self.get_query_params(query,**kwargs)),category=category)       
     
-    def result(self,object,child=False,category=None,**kwargs):
+    def result(self,object,infant=False,category=None,**kwargs): 
         """Implement for get both json and soup objects"""
         # if child:
         #     child_result = self.parse_child_obejct(soup,category=category,**kwargs)   
-        # for infant in self.parse_parent(soup):
-        #     child_result = self.parse_child_object(self.request(infant),category=category,**kwargs) 
+        for child in self.parse_parent_object(object):
+            if helpers.isvalid_url(child):
+                result = self.parse_object(child,url=True)
+            elif helpers.isvalid_json(child):
+                """Unpack Json data"""
     
     def get_query_params(self,query=None,**kwargs):
         """Should be overwritten if engine needs query params"""
@@ -77,17 +88,16 @@ class RootFetch():
         """Should be overwritten if engine needs url paths"""
         return 
            
-    @abstractmethod
     def parse_parent_object(self,parent_object):
-        """Implement to Parse both json and html"""
-        raise NotImplementedError(
-            "subclasses must define method <parse_parent>")
-        #return " Children objects(links/raw_html/json)"
+
+        """Override if engine needs to parse parent object"""
+        return [parent_object]
+        #return " Children objects(links/soup/json)"
     
     @abstractmethod
-    def parse_child_object(self,child_object,category=None,**kwargs):
+    def parse_object(self,object,category=None,url=False,json=False,soup=False,**kwargs):
         raise NotImplementedError(
-            "subclasses must define method <parse_child_object>")
+            "subclasses must define method <parse_object>")
         #return "All details in child soup (child_result)"
             
 
