@@ -40,7 +40,7 @@ class Fetch(RootSearch):
             song_link = track_elem.h4.a['href']
             song_title = track_elem.h4.a.text + track_elem.span.text if track_elem.span!=None else track_elem.h4.a.text 
         return
-
+    
     def fetch(self,page=None,category=None,**kwargs):
         self.search(page=page,category=category,**kwargs)
 
