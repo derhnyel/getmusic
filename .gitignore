@@ -5,6 +5,6 @@
 *.exe~
 **/jnscrap.py
 **/slscrap.py
-*jnscrap.py
-*slscrap.py
+# *jnscrap.py
+# *slscrap.py
 .vscode
