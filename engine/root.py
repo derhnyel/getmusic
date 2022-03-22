@@ -8,11 +8,12 @@ from abc import ABC, abstractmethod
 from bs4 import BeautifulSoup as bs4
 from fake_useragent import UserAgent
 
-import helpers
+import utils.helpers as helpers
 
 
-class RootSearch(ABC):
-
+class BaseEngine(ABC):
+    site_uri = ""
+    GET, POST = "get", "post"
     ALBUM, MUSIC, TRACK = "albums", "music", "tracks"
 
     def get_formated_url(

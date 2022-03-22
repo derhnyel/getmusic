@@ -1,5 +1,5 @@
-from root import RootSearch
 import re
+from engine.root import BaseEngine
 
 # from lxml import etree
 
@@ -7,7 +7,7 @@ import re
 """Also find a way to differentiate between album and track children when using Search not Fetch"""
 
 
-class Songslover(RootSearch):
+class Songslover(BaseEngine):
     engine_name = "songslover"
     page_path = "page"
     tracks_category = "category"
@@ -16,10 +16,9 @@ class Songslover(RootSearch):
         super().__init__()
         self.site_uri = "https://songslover.vip/"
         self.request_method = self.GET
-        self.reponse_type = self.HTML
 
     def search(self, query=None, page=None, category=None, **kwargs):
-        soup = self.get_soup(url="https://songslover.vip/albums/page/1")
+        soup = self.get_soup(url=self.get_formated_url(category="albums", page=2))
 
         response = self.parse_parent_object(soup)
         return response
@@ -32,9 +31,9 @@ class Songslover(RootSearch):
         if page >= 251:
             page = 250
         return (
-            (category, self.page_path, page)
+            (category, self.page_path, str(page))
             if category == self.ALBUM
-            else (self.tracks_category, category, self.page_path, page)
+            else (self.tracks_category, category, self.page_path, str(page))
         )
 
     def parse_parent_object(self, soup, **kwargs):
