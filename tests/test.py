@@ -1,27 +1,33 @@
 import unittest
+import json as js
 from urllib.request import urlopen
 from bs4 import BeautifulSoup
+from engine.songslover import Songslover as Engine
 
 
-
-class Test(unittest.TestCase):
+class Test(unittest.TestCase,Engine):
     
-    parent_object = None
-    single_object= None
-    query = {}
-    
-    def setUpClass():
-        url = "engine_url" 
-        Test.soup = BeautifulSoup(urlopen(url),'html.parser')
+    def setUpClass(url,json=False):
+        content = urlopen(url)
+        return js.loads(content) if json else BeautifulSoup(content,'html.parser')
     
     def test_parse_parent_object(self):
-      self.assertEqual('Python', pageTitle);
+        url="<parent url>"
+        parent_object = self.setUpclass(url)
+        response = self.parse_parent_object(parent_object)
+        #item url should be equal to a particular value
+        self.assertEqual('<get link to an item>', response)
     
     def test_parse_single_object(self):
-      self.assertIsNotNone(content)
+       url="<single url>"
+       single_object = self.setUpclass(url)
+       response = self.parse_single_object(single_object)
+       self.assertIsNotNone(response)#download link value shouldn't be None
     
     def test_search(self):
-       self.assertIsInstance(engine.search(self.soup), str)
+       response= self.search(query={})
+       #search should return a value and should be a dict object 
+       self.assertIsInstance(response,dict)
 
 if __name__ == '__main__':
    unittest.main()    
