@@ -23,8 +23,6 @@ class Songslover(BaseEngine):
         response = self.parse_parent_object(soup)
         return response
 
-    """Implement to """
-
     def get_url_path(self, page=None, category=None):
         if page <= 0 or page is None:
             page = 1
@@ -38,7 +36,7 @@ class Songslover(BaseEngine):
 
     def parse_parent_object(self, soup, **kwargs):
         return list(
-            self.parse_single_object(self.get_soup(elem["href"]))
+            self.parse_single_object(self.get_response_object(elem["href"]))
             for elem in soup.select("article h2 a")
         )
 

@@ -1,8 +1,5 @@
 from engine.root import BaseEngine
 
-"""Figure out a way to combine both ftch and search"""
-"""Also find a way to differentiate between album and track children when using Search not Fetch"""
-
 
 class JustNaija(BaseEngine):
     engine_name = "justnaija"
@@ -25,7 +22,7 @@ class JustNaija(BaseEngine):
         )
 
     def search(self, query=None, page=None, category=None, **kwargs):
-        soup = self.get_soup(url=self.get_formated_url(category="albums", page=2))
+        soup = self.get_response_object(url=self.get_formated_url(category="albums", page=2))
 
         response = self.parse_parent_object(soup)
         print(response)

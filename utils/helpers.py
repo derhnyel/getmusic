@@ -48,7 +48,7 @@ def gen_user_agent() -> str:
        pass
     return user_agent
 
-def join_url_path(paths: str):
+def join_url_path(paths: list):
     try:
         return ('/').join(paths)
     except Exception:    
