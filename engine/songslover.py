@@ -36,13 +36,13 @@ class Songslover(BaseEngine):
             for elem in soup.select("article h2 a")
         )
 
-    def search(self,query=None,page=None,category=None,**kwargs):
+    def search(self,query=None,page=1,category=None,**kwargs):
         search_url = self.get_formated_url(
             query = query,
-            path = () if page is None else (
+            path = (
                 self.page_path,str(page)),
                 page=page,
-                category=category
+                category=category,
                 )
         soup = self.get_response_object(url=search_url,**kwargs)
         response = self.parse_parent_object(soup,**kwargs)
