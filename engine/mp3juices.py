@@ -20,7 +20,7 @@ class Mp3Juices(BaseEngine):
     def search(self, query=None, page=0, **kwargs):
         response = self.get_response_object(url=self.get_formated_url(**kwargs),payload=self.get_query_params(query=query,page=page))
         response = json.loads(response.text.strip("();\n"))["response"]
-        return list(dict(artist=item["artist"],title=item['title'],category_download=item["url"], track_length=item['duration']/60) for item in response if isinstance(item,dict))
+        return list(dict(category='track',artist=item["artist"],title=item['title'],category_download=item["url"], track_length=item['duration']/60) for item in response if isinstance(item,dict))
     
 
 
