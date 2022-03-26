@@ -7,28 +7,12 @@ response_type = json
 GET REQUEST to https://stream_ace1.1010diy.com//download?url=&quality=&ext=&title=
 payload = {url:url,quality:quality,ext:extension,title:title}
 
-
-*** 2. GET REQUEST to https://mp3-juice.com/api.php?q=your%20query
-payload = {'q':your_query}
-response_type = json
-
 3. GET REQUEST to https://line.1010diy.com/web/free-mp3-finder/query?q=your+query&type=youtube&pageToken=
 payload = {'q': your_query ,'type':'youtube','pageToken':None}
-response_type = html
+response_type = json
 https://line.1010diy.com/web/free-mp3-finder/detail?url= 
 SAME THING AS NUMBER 1
 SORT BY VIEWS
-
-*** 4. GET REQUEST to https://mp3quack.app/mp3/your-query or https://mp3quack.app/?q=your%20query
-Nopayload
-response_type = html
-extract_id from image art url from reponse html
-get request to https://ytmp3cut.com/extract_id
-response_type = html
-extract_song_title and parse it as a query from response html append it as a path add .mp3 to the end
-https://fr01-5.ytmp3cut.com/key/extract_song_title.mp3
-https://nl01-5.ytmp3cut.com/key/extract_song_title.mp3
-
 
 5. GET REQUEST to https://your-query.myfreemp3.icu/
 Nopayload
@@ -43,7 +27,42 @@ response_type = html
 7. GET REQUEST to https://justnaija.com/search?q=your+query&folder={music,everywhere=None,album,video}
 payload = {'q':your_query,'folder':}
 
-*** 8. POST REQUEST to https://tubidy.dj/ 
+10. POST REQUEST to https://myfreemp3juices.cc/api/search.php?# callback=jQuery21308878779260465037_1645999942802
+payload 
+#######################*Query String Parameters = {'callback':'jQuery21308878779260465037_1645999942802'}
+*Form Data = {'q':your_query,page:0}
+response_type = json
+Get REQUEST to https://idmp3s.com/api/vip/get_song.php?id=song_id
+respons_type = html
+
+11. www.naijamusic.com.ng
+
+12. GET www.mp3-juices.plus/mp3/your_query
+response_type = html
+parse html extract "data-vid"
+GET https://api.mp3-juices.io/api/json/mp3/data-vid
+response_type = json
+
+**9. POST REQUEST to https://www.mp3juices3.cc/ 
+payload = {'query':your_query}
+response_type = html
+uses redirect link---could use selenium for link
+
+*******2. GET REQUEST to https://mp3-juice.com/api.php?q=your%20query
+payload = {'q':your_query}
+response_type = json
+
+*******4. GET REQUEST to https://mp3quack.app/mp3/your-query or https://mp3quack.app/?q=your%20query
+Nopayload
+response_type = html
+extract_id from image art url from reponse html
+get request to https://ytmp3cut.com/extract_id
+response_type = html
+extract_song_title and parse it as a query from response html append it as a path add .mp3 to the end
+https://fr01-5.ytmp3cut.com/key/extract_song_title.mp3
+https://nl01-5.ytmp3cut.com/key/extract_song_title.mp3
+
+********8. POST REQUEST to https://tubidy.dj/ 
 payload = {'q':your_query}
 response_type = html
 ** Send tid in html reponse script as a POST REQUEST to https://tubidy.dj/
@@ -55,19 +74,6 @@ response = {progress: "/dl.php?id=tid,status: "done"}
 response_type = html
 response = extract convertersbear url and make a get request
 
-*** 9. POST REQUEST to https://www.mp3juices3.cc/ 
-payload = {'query':your_query}
-response_type = html
-
-10. POST REQUEST to https://myfreemp3juices.cc/api/search.php?# callback=jQuery21308878779260465037_1645999942802
-payload 
-#######################*Query String Parameters = {'callback':'jQuery21308878779260465037_1645999942802'}
-*Form Data = {'q':your_query,page:0}
-response_type = json
-Get REQUEST to https://idmp3s.com/api/vip/get_song.php?id=song_id
-respons_type = html
-
-11. www.naijamusic.com.ng
 
 #### Muse Engine Optimisations
 **** Use aiohttp and ayncio for making concurrent requests.

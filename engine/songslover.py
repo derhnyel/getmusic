@@ -6,7 +6,7 @@ from engine.root import BaseEngine
 """Figure out a way to combine both fetch and search"""
 """Also find a way to differentiate between album and track children when using Search not Fetch"""
 
-class Songslover(BaseEngine):
+class SongsLover(BaseEngine):
     #create_Enum
     engine_name = "songslover"
     page_path = "page"
@@ -18,7 +18,7 @@ class Songslover(BaseEngine):
         self.site_uri = "https://songslover.vip/"
         self.request_method = self.GET
 
-    def fetch(self,category='albums',page=1,**kwargs):
+    def fetch(self,category='tracks',page=1,**kwargs):
         soup = self.get_response_object(url=kwargs.pop('url') if kwargs.get(
             'url') else self.get_formated_url(category=category, page=page, params={},**kwargs))
         return self.parse_parent_object(soup,**kwargs)
