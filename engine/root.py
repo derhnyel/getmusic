@@ -50,8 +50,7 @@ class BaseEngine(ABC):
         header= self.get_header()
         method = self.request_method if method is None else method
         if method==self.POST:
-            #function to identify response type and parse accordingly
-            return requests.request("POST",url,headers=header,data=payload).json() 
+            return requests.request("POST",url,headers=header,data=payload)
         webpage = requests.get(url, headers=header)
         soup = bs4(webpage.content, "html.parser")
         return soup
@@ -68,6 +67,5 @@ class BaseEngine(ABC):
         return
 
     def parse_parent_object(self, parent_object):
-
         """Override if engine needs to parse parent object"""
         return parent_object

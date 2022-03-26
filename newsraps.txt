@@ -78,5 +78,20 @@ Domain https://getmusic.live
 Something like check https://getmusic.ng
 
 
+#def parse_single_object(self,json,**kwargs): 
+    # return self.get_formated_url(
+    #     url = "https://idmp3s.com/",
+    #     params = self.get_query_params(**{'id':id}),
+    #     method = self.GET,path=("api","vip","get_song.php"),
+    # )
 
+# (
+#     (self.tracks_category, category, self.page_path, page)
+#     if category == self.TRACK
+#     else (category, self.page_path, page)
+# )
 
+# return list(
+#     (elem["href"],elem['href'].split('/')[3])
+#     for elem in soup.select("article h2 a")
+# )

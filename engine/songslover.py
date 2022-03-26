@@ -6,18 +6,14 @@ from engine.root import BaseEngine
 """Figure out a way to combine both fetch and search"""
 """Also find a way to differentiate between album and track children when using Search not Fetch"""
 
-
 class Songslover(BaseEngine):
     engine_name = "songslover"
     page_path = "page"
-
-    #tracks_category = "category"
 
     def __init__(self):
         super().__init__()
         self.site_uri = "https://songslover.vip/"
         self.request_method = self.GET
-
 
     def fetch(self,category='albums',page=1,**kwargs):
         soup = self.get_response_object(url=kwargs.pop('url') if kwargs.get('url') else self.get_formated_url(category=category, page=page,params={}))
@@ -31,17 +27,7 @@ class Songslover(BaseEngine):
             page = 255
         return (category, self.page_path, str(page)) 
         
-        # (
-        #     (self.tracks_category, category, self.page_path, page)
-        #     if category == self.TRACK
-        #     else (category, self.page_path, page)
-        # )
-
     def parse_parent_object(self, soup,**kwargs):
-        # return list(
-        #     (elem["href"],elem['href'].split('/')[3])
-        #     for elem in soup.select("article h2 a")
-        # )
         return list(
             self.parse_single_object(self.get_response_object(elem["href"]),category=elem['href'].split('/')[3])
             for elem in soup.select("article h2 a")
@@ -52,8 +38,6 @@ class Songslover(BaseEngine):
         soup = self.get_response_object(url=search_url)
         response = self.parse_parent_object(soup)
         return response
-
-        #parse child object individually with category
 
     def get_query_params(self, query=None,**kwargs):
         return {
