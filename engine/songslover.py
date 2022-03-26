@@ -7,8 +7,11 @@ from engine.root import BaseEngine
 """Also find a way to differentiate between album and track children when using Search not Fetch"""
 
 class Songslover(BaseEngine):
+    #create_Enum
     engine_name = "songslover"
     page_path = "page"
+
+    categories = ('albums','tracks','best-of-the-month','mixtapes','music-albums')
 
     def __init__(self):
         super().__init__()
@@ -16,9 +19,9 @@ class Songslover(BaseEngine):
         self.request_method = self.GET
 
     def fetch(self,category='albums',page=1,**kwargs):
-        soup = self.get_response_object(url=kwargs.pop('url') if kwargs.get('url') else self.get_formated_url(category=category, page=page,params={}))
-        response = self.parse_parent_object(soup)
-        return response
+        soup = self.get_response_object(url=kwargs.pop('url') if kwargs.get(
+            'url') else self.get_formated_url(category=category, page=page, params={},**kwargs))
+        return self.parse_parent_object(soup,**kwargs)
 
     def get_url_path(self, page=None, category=None):
         if page <= 0:
@@ -29,14 +32,20 @@ class Songslover(BaseEngine):
         
     def parse_parent_object(self, soup,**kwargs):
         return list(
-            self.parse_single_object(self.get_response_object(elem["href"]),category=elem['href'].split('/')[3])
+            self.parse_single_object(self.get_response_object(elem["href"],**kwargs),category=elem['href'].split('/')[3],**kwargs)
             for elem in soup.select("article h2 a")
         )
 
     def search(self,query=None,page=None,category=None,**kwargs):
-        search_url= self.get_formated_url(query=query,path=() if page is None else (self.page_path,str(page)),page=page,category=category)
-        soup = self.get_response_object(url=search_url)
-        response = self.parse_parent_object(soup)
+        search_url = self.get_formated_url(
+            query = query,
+            path = () if page is None else (
+                self.page_path,str(page)),
+                page=page,
+                category=category
+                )
+        soup = self.get_response_object(url=search_url,**kwargs)
+        response = self.parse_parent_object(soup,**kwargs)
         return response
 
     def get_query_params(self, query=None,**kwargs):
@@ -44,7 +53,7 @@ class Songslover(BaseEngine):
             's':query
         }
 
-    def parse_single_object(self, soup, category=None, **kwargs):
+    def parse_single_object(self,soup, category=None, **kwargs):
         try:
             artist, title = soup.select(
                 'div[class="post-inner"] h1 span[itemprop="name"]'
@@ -58,7 +67,7 @@ class Songslover(BaseEngine):
             art_link = soup.select('div[class="entry"] img[src]')[0]["src"]
         except Exception:
             art_link = None
-        if category == self.TRACK:
+        if category == "tracks":
             regex_group = [
                 soup.find(text=re.compile(".*(Save).*(Link)$")),
                 soup.find(text=re.compile(".*(Save).*(Link).*(Server){1}.*(2){1}$")),
@@ -68,7 +77,7 @@ class Songslover(BaseEngine):
             ]
             valid_group = list(i for i in regex_group if i != None)
             download_link = valid_group[0].find_previous("a")["href"] if len(valid_group) >= 1 else None
-            return dict(artist=artist,title=title,category_download=download_link,category_art=art_link)
+            return dict(type='track',category=category,artist=artist,title=title,category_download=download_link,category_art=art_link)
 
         try:
             download_link = soup.find(
@@ -113,4 +122,4 @@ class Songslover(BaseEngine):
                 tracks_details.append((song_title,song_link))    
             except Exception:
                 pass
-        return dict(artist=artist,title=title,category_download=download_link,category_art=art_link,category_tracks_details=tracks_details)
+        return dict(type='album',category=category,artist=artist,title=title,category_download=download_link,category_art=art_link,category_tracks_details=tracks_details)

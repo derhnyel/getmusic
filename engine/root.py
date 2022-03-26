@@ -12,17 +12,25 @@ import utils.helpers as helpers
 
 
 class BaseEngine(ABC):
-    #create an enum object for this
-    site_uri = ""
-    GET, POST = "get", "post"
-    ALBUM, MUSIC, TRACK = "albums", "music", "tracks"
+
+    #create an Enum object for this
+    site_uri = None
     request_method = None
+    GET, POST = "get", "post"
 
     def get_formated_url(
         self,url=None,path=None,page=None, category=None, query=None, method=None,params=None, **kwargs):
         url = urlparse(self.site_uri) if url is None else urlparse(url)
-        url_path = helpers.join_url_path(self.get_url_path(page=page,category=category)) if path is None else helpers.join_url_path(path)
-        params = self.get_query_params(query, **kwargs) if params is None else params
+        url_path = helpers.join_url_path(self.get_url_path(
+            page=page,
+            category=category,
+            **kwargs)
+            ) if path is None else helpers.join_url_path(path)
+        params = self.get_query_params(
+            query=query,
+            page=page,
+            category=category,
+            **kwargs) if params is None else params
         method = self.request_method if method is None else method
         self.formated_url = (
             url._replace(
@@ -31,6 +39,7 @@ class BaseEngine(ABC):
             if method == self.GET
             else url._replace(path=url_path)
         )
+        print(self.formated_url.geturl())
         return self.formated_url.geturl()
 
     def get_header(self):
@@ -42,11 +51,12 @@ class BaseEngine(ABC):
         return headers
 
     @abstractmethod
-    def search(self, query=None, page=None, category=None, **kwargs):
+    def search(self, query=None, page=None, category=None,**kwargs):
         """Each engines implements it's own searching style"""
         raise NotImplementedError()
 
     def get_response_object(self,url,method=None,payload=None,**kwargs):
+        print("\n\n\nGET RESPONSE URL :  "+url)
         header= self.get_header()
         method = self.request_method if method is None else method
         if method==self.POST:
@@ -55,17 +65,23 @@ class BaseEngine(ABC):
         soup = bs4(webpage.content, "html.parser")
         return soup
 
-    def result(self, object, infant=False, category=None, **kwargs):
-        """Implement for get both json and soup objects"""
-
-    def get_query_params(self, query=None, **kwargs):
+    def get_query_params(self, query=None,page=None,category=None,**kwargs):
         """Should be overwritten if engine needs query params"""
         return {"q": query}
 
-    def get_url_path(self, page=None, category=None):
+    def get_url_path(self, page=None, category=None,**kwargs):
         """Should be overwritten if engine needs url paths"""
         return
 
-    def parse_parent_object(self, parent_object):
+    def parse_parent_object(self, parent_object=None,**kwwargs):
         """Override if engine needs to parse parent object"""
-        return parent_object
+        return 
+
+    def parse_single_object(self, object=None,**kwargs):
+        """Override if engine needs to parse single object"""
+        return
+
+    def fetch(self, category=None, page=None, **kwargs):
+        """Override if engine needs to fetch items"""
+        return
+
