@@ -1,4 +1,3 @@
-# <div align ="center">*GETMUSIC*</div>
+ <div align ="center">![logo](https://github.com/derhnyel/getmusic/blob/build-engine/assets/logo.jpg?raw=true)</div>
 
- ![logo](https://github.com/derhnyel/getmusic/blob/build-engine/assets/logo.jpg?raw=true)
-
+### <div align ="center">*GETMUSIC*</div>
