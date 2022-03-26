@@ -7,6 +7,7 @@ from urllib.parse import urlparse, urlencode
 from abc import ABC, abstractmethod
 from bs4 import BeautifulSoup as bs4
 
+
 import utils.helpers as helpers
 
 
@@ -18,9 +19,9 @@ class BaseEngine(ABC):
     request_method = None
 
     def get_formated_url(
-        self, url=None,path=None,page=None, category=None, query=None, method=None,params=None, **kwargs):
+        self,url=None,path=None,page=None, category=None, query=None, method=None,params=None, **kwargs):
         url = urlparse(self.site_uri) if url is None else urlparse(url)
-        url_path = helpers.join_url_path(self.get_url_path(page, category)) if path is None else helpers.join_url_path(path)
+        url_path = helpers.join_url_path(self.get_url_path(page=page,category=category)) if path is None else helpers.join_url_path(path)
         params = self.get_query_params(query, **kwargs) if params is None else params
         method = self.request_method if method is None else method
         self.formated_url = (

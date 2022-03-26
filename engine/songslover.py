@@ -10,37 +10,57 @@ from engine.root import BaseEngine
 class Songslover(BaseEngine):
     engine_name = "songslover"
     page_path = "page"
-    tracks_category = "category"
+
+    #tracks_category = "category"
 
     def __init__(self):
         super().__init__()
         self.site_uri = "https://songslover.vip/"
         self.request_method = self.GET
 
-    def search(self, query=None, page=None, category=None, **kwargs):
-        soup = self.get_soup(url=self.get_formated_url(category="albums", page=2))
 
+    def fetch(self,category='albums',page=1,**kwargs):
+        soup = self.get_response_object(url=kwargs.pop('url') if kwargs.get('url') else self.get_formated_url(category=category, page=page,params={}))
         response = self.parse_parent_object(soup)
         return response
 
     def get_url_path(self, page=None, category=None):
-        if page <= 0 or page is None:
+        if page <= 0:
             page = 1
-        if page >= 251:
-            page = 250
-        return (
-            (category, self.page_path, str(page))
-            if category == self.ALBUM
-            else (self.tracks_category, category, self.page_path, str(page))
-        )
+        if page >= 256:
+            page = 255
+        return (category, self.page_path, str(page)) 
+        
+        # (
+        #     (self.tracks_category, category, self.page_path, page)
+        #     if category == self.TRACK
+        #     else (category, self.page_path, page)
+        # )
 
-    def parse_parent_object(self, soup, **kwargs):
+    def parse_parent_object(self, soup,**kwargs):
+        # return list(
+        #     (elem["href"],elem['href'].split('/')[3])
+        #     for elem in soup.select("article h2 a")
+        # )
         return list(
-            self.parse_single_object(self.get_response_object(elem["href"]))
+            self.parse_single_object(self.get_response_object(elem["href"]),category=elem['href'].split('/')[3])
             for elem in soup.select("article h2 a")
         )
 
-    def parse_single_object(self, soup, category="album", **kwargs):
+    def search(self,query=None,page=None,category=None,**kwargs):
+        search_url= self.get_formated_url(query=query,path=() if page is None else (self.page_path,str(page)),page=page,category=category)
+        soup = self.get_response_object(url=search_url)
+        response = self.parse_parent_object(soup)
+        return response
+
+        #parse child object individually with category
+
+    def get_query_params(self, query=None,**kwargs):
+        return {
+            's':query
+        }
+
+    def parse_single_object(self, soup, category=None, **kwargs):
         try:
             artist, title = soup.select(
                 'div[class="post-inner"] h1 span[itemprop="name"]'
@@ -63,10 +83,9 @@ class Songslover(BaseEngine):
                 soup.find(text=re.compile(".*(Save).*(File)$")),
             ]
             valid_group = list(i for i in regex_group if i != None)
-            if len(valid_group) >= 1:
-                download_link = valid_group[0].find_previous("a")["href"]
-            download_link = None
-            return download_link
+            download_link = valid_group[0].find_previous("a")["href"] if len(valid_group) >= 1 else None
+            return dict(artist=artist,title=title,category_download=download_link,category_art=art_link)
+
         try:
             download_link = soup.find(
                 text=re.compile(".*(All).*(in).*(One).*(Server).*(2).*")
@@ -84,6 +103,7 @@ class Songslover(BaseEngine):
         if len(valid_group) <= 0:
             return None
         response_elements = valid_group[0]
+        tracks_details = []
         for element in response_elements:
             try:
                 song_title = element.text
@@ -106,6 +126,7 @@ class Songslover(BaseEngine):
                     continue
                 elif song_title.startswith("Download"):
                     song_title = song_title[8:]
+                tracks_details.append((song_title,song_link))    
             except Exception:
                 pass
-        return dict(download_link=download_link, art_link=art_link)
+        return dict(artist=artist,title=title,category_download=download_link,category_art=art_link,category_tracks_details=tracks_details)
