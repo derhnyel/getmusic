@@ -25,14 +25,17 @@ class Mp3Juices(BaseEngine):
                 )
             )
         response = json.loads(response.text.strip("();\n"))["response"]
+        return self.parse_single_object(response,**kwargs) 
+
+    def parse_single_object(self,json_response=None,**kwargs):
         return list(dict(
             category='track',
             artist=item["artist"],
             title=item['title'],
             category_download=item["url"],
             track_length=item['duration']/60) 
-            for item in response if isinstance(item,dict)
-            )
+            for item in json.loads(json_response) if isinstance(item,dict)
+            )        
     
 
 
