@@ -1,7 +1,7 @@
 from engine.root import BaseEngine
 import json
 
-class FreeMp3(BaseEngine):
+class Ace(BaseEngine):
     
     def __init__(self):
         super().__init__()
@@ -24,11 +24,17 @@ class FreeMp3(BaseEngine):
         )
         response = json.loads(response.text.strip("</iframe"))
         #Get artist and song Title duration too try/except split with #"-"
-        youtube_links = list(self.parse_parent_object(item['url']) for  item in response['data']['items'])
-        return youtube_links
+
+        return list(dict(
+            title=item['title'],
+            #artist = item['title'][0] if len(item['title'].split(" - ")) > 1 else item['title'],
+            track_lenght=item['duration'],
+            category_art=item['thumbnail'],
+            category_video_palyer= item['player'],
+            category_details=self.parse_parent_object(item['url'],title=item['title'])) for  item in response['data']['items'])
 
 
-    def parse_parent_object(self,link,**kwargs):
+    def parse_parent_object(self,link=None,title=None,**kwargs):
         #get file size, audio quality ,extension
         details_url = self.get_formated_url(
             url="https://backendace.1010diy.com/",
@@ -40,19 +46,26 @@ class FreeMp3(BaseEngine):
             url=details_url,
             **kwargs,
         )
-        response = json.loads(response.text)['data']['audios']
+        response = json.loads(response.text)['data']['audios'] + json.loads(response.text)['data']['videos']
         
-        [self.parse_child_object(item['url']) item for item in response]
+        return list(dict(
+            file_size=item['fileSize'],
+            quality=item['formatNote'],
+            type='track' if item['ext'] in ['mp3', 'ogg','wav',] else 'video' if item['ext'] in ['mp4'] else None,
+            category_download=self.parse_single_object(
+                item['url'],title,
+                item['ext'],
+                **kwargs)) 
+            for item in response)
 
-   def parse_child_object(self,link,**kwargs):
+    def parse_single_object(self,link=None,title=None,category_type=None,**kwargs):
        #get download link
-       download_link  = self.get_formated_url(
+        return link if link.startswith('https://') else self.get_formated_url(
             url="https://stream_ace1.1010diy.com/",
-            params = {},
+            params = {'ext':category_type,'title':title},
             method = self.GET,
-            path=([link]),
+            path=['/{link}'.format(link=link)],
         )
-        return download_link
 
 
 
