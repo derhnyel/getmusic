@@ -43,6 +43,7 @@ class SongsLover(BaseEngine):
                 self.page_path,str(page)),
                 page=page,
                 category=category,
+                **kwargs,
                 )
         soup = self.get_response_object(url=search_url,**kwargs)
         response = self.parse_parent_object(soup,**kwargs)
