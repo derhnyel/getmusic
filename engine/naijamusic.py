@@ -28,9 +28,10 @@ class NaijaMusic(BaseEngine):
         return self.parse_parent_object(soup,**kwargs)
 
     def parse_single_object(self, soup, category=None, **kwargs):
-        #some albums li have href while others dont
-        #logic to extract download_link,artist,title for all
-        #only difference is that for tracks the soupis passed directly here
-        # for albums each url is parsed and passed to this function
+        # if???? some albums li have href while others dont this is to select song_titles and links in album page
+        # logic to extract download_link,artist,title for all (div class="the-post-header s-head-modern s-head-large h1 class="is-title post-title") text split with " – "
+        # only difference is that for tracks category the soup is passed directly here
+        # for albums category each url is parsed and passed to this function
+        # if ??? or select the google ad block (div class="code-block code-block-14") the use .previous_sibling
         return 
 
