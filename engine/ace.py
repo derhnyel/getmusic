@@ -53,20 +53,14 @@ class Ace(BaseEngine):
             quality=item['formatNote'],
             type='track' if item['ext'] in ['mp3', 'ogg','wav',] else 'video' if item['ext'] in ['mp4'] else None,
             category_download=self.parse_single_object(
-                item['url'],title,
+                item['url'],
+                title,
                 item['ext'],
                 **kwargs)) 
             for item in response)
 
-    def parse_single_object(self,link=None,title=None,category_type=None,**kwargs):
-       #get download link
-        return link if link.startswith('https://') else self.get_formated_url(
-            url="https://stream_ace1.1010diy.com/",
-            params = {'ext':category_type,'title':title},
-            method = self.GET,
-            path=['/{link}'.format(link=link)],
-        )
-
+    def parse_single_object(self,link=None,title=None,category_type=None,**kwargs):         
+        return link if link.startswith('https://') else "https://stream_ace1.1010diy.com/{url}&ext={ext}&title={title}".format(url=link,ext=category_type,title=title),
 
 
 

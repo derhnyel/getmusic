@@ -39,7 +39,7 @@ class BaseEngine(ABC):
             if method == self.GET
             else url._replace(path=url_path)
         )
-        #print(self.formated_url.geturl())
+        print(self.formated_url.geturl())
         return self.formated_url.geturl()
 
     def get_header(self):
@@ -56,7 +56,7 @@ class BaseEngine(ABC):
         raise NotImplementedError()
 
     def get_response_object(self,url,method=None,payload=None,**kwargs):
-        #print("\n\n\nGET RESPONSE URL :  "+url)
+        print("\n\n\nGET RESPONSE URL :  "+url)
         header= self.get_header()
         method = self.request_method if method is None else method
         if method==self.POST:
