@@ -9,14 +9,14 @@ class Ace(BaseEngine):
         self.request_method = self.GET
     
 
-    def get_url_path(self,page=None,category=None,**kwargs):
+    def get_url_path(self,**kwargs):
         return('web','free-mp3-finder','query')
 
-    def get_query_params(self, query=None, page=None, **kwargs):
+    def get_query_params(self, query=None, **kwargs):
         return dict(q=query,type='youtube',pageToken='')
     
     #AN API SO URL NOT ALLOWED
-    def search(self, query=None, page=None, **kwargs):
+    def search(self, query='', **kwargs):
         response = self.get_response_object(
             url=self.get_formated_url(
                 query=query,

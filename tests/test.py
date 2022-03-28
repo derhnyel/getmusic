@@ -119,8 +119,7 @@ class TestScraping(unittest.TestCase):
         # self.assertTrue(len(self.results['category']) >= 1)
         # self.assertTrue(len(self.results['type']) >= 1)
         # self.assertTrue(len(self.results['category_download']) >= 1)
-        # coursera does not return descriptions for
-        # Preaching to the choir
+
     
     #Will be used when search is seperated from parses
     # def test_links(self):

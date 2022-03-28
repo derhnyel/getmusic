@@ -16,7 +16,7 @@ class Mp3Juices(BaseEngine):
         return ('api', 'search.php?')
     
     # An API So URL NOT ALLOWED
-    def search(self, query=None, page=0, **kwargs):
+    def search(self, query='', page=0, **kwargs):
         response = self.get_response_object(
             url = self.get_formated_url(**kwargs),
             payload = self.get_query_params(
@@ -36,7 +36,7 @@ class Mp3Juices(BaseEngine):
             title=item['title'],
             category_download=item["url"],
             track_length=item['duration']/60) 
-            for item in json.loads(json_response) if isinstance(item,dict)
+            for item in json_response if isinstance(item,dict)
             )        
     
 

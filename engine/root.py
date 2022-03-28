@@ -41,7 +41,7 @@ class BaseEngine(ABC):
             if method == self.GET
             else url._replace(path=url_path)
         )
-        print(self.formated_url.geturl())
+        print("\nFORMATED URL: "+self.formated_url.geturl())
         return self.formated_url.geturl()
 
     def get_header(self):
@@ -57,8 +57,13 @@ class BaseEngine(ABC):
         """Each engines implements it's own searching style"""
         raise NotImplementedError()
 
+    @abstractmethod
+    def parse_single_object(self, object=None,**kwargs):
+        """Each engine should have its own fetch single objects"""
+        raise NotImplementedError()    
+
     def get_response_object(self,url,method=None,payload=None,**kwargs):
-        print("\n\n\nGET RESPONSE URL :  "+url)
+        print("\n\n\nRESPONSE FROM URL :  "+url)
         header= self.get_header()
         method = self.request_method if method is None else method
         if method==self.POST:
@@ -79,12 +84,4 @@ class BaseEngine(ABC):
         """Override if engine needs to parse parent object"""
         return 
     
-    @abstractmethod
-    def parse_single_object(self, object=None,**kwargs):
-        """Each engine should have its own fetch single objects"""
-        raise NotImplementedError()
-
-    def fetch(self, category=None, page=None, **kwargs):
-        """Override if engine needs to fetch items"""
-        return
 

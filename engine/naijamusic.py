@@ -32,7 +32,7 @@ class NaijaMusic(BaseEngine):
                     #elem.text.split(':')[0] =='VIDEO')
                 
 
-    def search(self, query=None, page=1, category='tracks', **kwargs):
+    def search(self, query='', page=1, category='tracks', **kwargs):
         search_url = self.get_formated_url(url=kwargs.pop('url'),path='',params='' ) if kwargs.get(
             'url') else self.get_formated_url(
             query=query,

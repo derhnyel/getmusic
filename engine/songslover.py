@@ -38,7 +38,7 @@ class SongsLover(BaseEngine):
             for elem in soup.select("article h2 a")
         )
 
-    def search(self,query=None,page=1,category=None,**kwargs):
+    def search(self,query='',page=1,category=None,**kwargs):
         search_url = self.get_formated_url(url=kwargs.pop('url'),path='',params='' ) if kwargs.get(
             'url') else self.get_formated_url(
             query = query,
