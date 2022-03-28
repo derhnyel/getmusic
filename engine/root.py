@@ -14,7 +14,7 @@ class BaseEngine(ABC):
 
     """
     Search base to be extended by search engine
-    Every subclass must have two methods `search` amd `parse_single_object2`
+    Every subclass must have two methods `search` amd `parse_single_object`
     
     """
 
@@ -102,7 +102,7 @@ class BaseEngine(ABC):
             else url._replace(path=url_path)
         )
 
-        #print("\nFORMATED URL: "+self.formated_url.geturl())
+        print("\nFORMATED URL: "+self.formated_url.geturl())
         return self.formated_url.geturl()
 
     def get_header(self):
@@ -127,7 +127,7 @@ class BaseEngine(ABC):
         :header: dict -> The request header
         :return: Html source code or Json of a given URL.
         """
-        #print("\n\n\nRESPONSE FROM URL :  "+url)
+        print("\n\n\nRESPONSE FROM URL :  "+url)
 
         # Get header and method either passed into the get_response_object or globally set
         header= self.get_header() if header is None else header

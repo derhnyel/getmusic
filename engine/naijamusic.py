@@ -93,7 +93,7 @@ class NaijaMusic(BaseEngine):
                     'div[class="the-post-header s-head-modern s-head-large"] h1[class="is-title post-title"]')[0].text  
 
         # GEt the art link         
-        art_link = 'https:{link}'.format(soup.select(
+        art_link = 'https:{link}'.format(link=soup.select(
                 'div[class="post-content cf entry-content content-spacious"] picture img')[0]['data-lazy-src'])
 
         # Album / Eps on NaijaMusic usually have tracks leading to their individual Pages

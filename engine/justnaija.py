@@ -120,11 +120,15 @@ class JustNaija(BaseEngine):
             for track_elem in tracklist_elem:
                 try:
                     track = ''.join(track_elem.previous_sibling).strip('\r\n')
+                    if track in {'Tracklist','','Track List;'}:continue
                 except:
                     continue
                 tracks_details.append(track)
             return dict(type='album',category=category,artist=artist, title=title, category_art=art_link, category_download=download_link, category_tracks_details=tracks_details)
-        head = header_elem.text.split("] ")[1].split(" – ")
+        try:
+            head = header_elem.text.split("] ")[1].split(" – ")
+        except:
+             head = header_elem.text.split(" – ")   
         #fOR SINGLE TRACKS
         artist,title = head if len(head) is 2 else header_elem.text.split("] ")[1].split(" - ")
         return dict(type='track',category=category,artist=artist, title=title, category_art=art_link, category_download=download_link)
