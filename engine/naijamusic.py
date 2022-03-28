@@ -6,7 +6,7 @@ class NaijaMusic(BaseEngine):
     #create_Enum
     engine_name = "naijamusic"
     page_path = "page"
-    categories = ('albums-eps', 'new','mixtape','gospel','south-african-music','ghana','tag')
+    allowed_categories = ('albums-eps', 'new','mixtape','gospel','south-african-music','ghana','tag')
 
     def __init__(self):
         super().__init__()
@@ -33,7 +33,8 @@ class NaijaMusic(BaseEngine):
                 
 
     def search(self, query=None, page=1, category='tracks', **kwargs):
-        search_url = self.get_formated_url(
+        search_url = self.get_formated_url(url=kwargs.pop('url'),path='',params='' ) if kwargs.get(
+            'url') else self.get_formated_url(
             query=query,
             path=(
                 self.page_path, str(page)),
@@ -50,10 +51,10 @@ class NaijaMusic(BaseEngine):
                 category=category,
                 params ={},
                 **kwargs,
-            )
+            ) 
         soup = self.get_response_object(url=search_url,**kwargs)
-        response = self.parse_parent_object(soup,category=category,**kwargs)
-        return response
+        self.results = self.parse_parent_object(soup,category=category,**kwargs)
+        return self.results
 
     def get_query_params(self, query=None, **kwargs):
         return {
@@ -63,9 +64,10 @@ class NaijaMusic(BaseEngine):
     #change to fetch 
     #header={'referer': url} when downloading file
     def fetch(self, category='new',page=1, **kwargs):
-        soup = self.get_response_object(url=kwargs.pop('url') if kwargs.get(
+        soup = self.get_response_object(url = self.get_formated_url(url=kwargs.pop('url'),path='',params='') if kwargs.get(
             'url') else self.get_formated_url(category=category, page=page, params={}, **kwargs))  
-        return self.parse_parent_object(soup,category=category,**kwargs)
+        self.results = self.parse_parent_object(soup,category=category,**kwargs)
+        return self.results
     
     def get_download_link(self,soup,referer=None,**kwargs):
         download_elem = soup.select('audio[class="wp-audio-shortcode"]')

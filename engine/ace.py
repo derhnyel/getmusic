@@ -14,7 +14,8 @@ class Ace(BaseEngine):
 
     def get_query_params(self, query=None, page=None, **kwargs):
         return dict(q=query,type='youtube',pageToken='')
-
+    
+    #AN API SO URL NOT ALLOWED
     def search(self, query=None, page=None, **kwargs):
         response = self.get_response_object(
             url=self.get_formated_url(
@@ -25,13 +26,15 @@ class Ace(BaseEngine):
         response = json.loads(response.text.strip("</iframe"))
         #Get artist and song Title duration too try/except split with #"-"
 
-        return list(dict(
+        self.results = list(dict(
             title=item['title'],
             #artist = item['title'][0] if len(item['title'].split(" - ")) > 1 else item['title'],
+            category ='track',
             track_lenght=item['duration'],
             category_art=item['thumbnail'],
             category_video_palyer= item['player'],
             category_details=self.parse_parent_object(item['url'],title=item['title'])) for  item in response['data']['items'])
+        return self.results    
 
 
     def parse_parent_object(self,link=None,title=None,**kwargs):

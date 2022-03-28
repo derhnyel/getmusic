@@ -11,7 +11,7 @@ class SongsLover(BaseEngine):
     engine_name = "songslover"
     page_path = "page"
 
-    categories = ('albums','tracks','best-of-the-month','mixtapes','music-albums')
+    allowed_categories = ('albums','tracks','best-of-the-month','mixtapes','music-albums')
 
     def __init__(self):
         super().__init__()
@@ -19,10 +19,12 @@ class SongsLover(BaseEngine):
         self.request_method = self.GET
 
     def fetch(self,category='tracks',page=1,**kwargs):
-        soup = self.get_response_object(url=kwargs.pop('url') if kwargs.get(
-            'url') else self.get_formated_url(category=category, page=page, params={},**kwargs))
-        return self.parse_parent_object(soup,**kwargs)
-
+        #update Formated url
+        soup = self.get_response_object(url = self.get_formated_url(url=kwargs.pop('url'),path='',params='') if kwargs.get(
+            'url') else self.get_formated_url(category=category, page=page, params={},**kwargs)) 
+        self.results=self.parse_parent_object(soup,**kwargs)
+        return self.results
+        
     def get_url_path(self, page=None, category=None):
         if page <= 0:
             page = 1
@@ -37,17 +39,18 @@ class SongsLover(BaseEngine):
         )
 
     def search(self,query=None,page=1,category=None,**kwargs):
-        search_url = self.get_formated_url(
+        search_url = self.get_formated_url(url=kwargs.pop('url'),path='',params='' ) if kwargs.get(
+            'url') else self.get_formated_url(
             query = query,
             path = (
                 self.page_path,str(page)),
                 page=page,
                 category=category,
                 **kwargs,
-                )
+                )     
         soup = self.get_response_object(url=search_url,**kwargs)
-        response = self.parse_parent_object(soup,**kwargs)
-        return response
+        self.results = self.parse_parent_object(soup,**kwargs)
+        return self.results
 
     def get_query_params(self, query=None,**kwargs):
         return {

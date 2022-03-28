@@ -8,7 +8,7 @@ class JustNaija(BaseEngine):
     music_category = "music"
     tracks_page_path = "music-mp3"
     
-    categories = ('gospel','throwback','download-mp3','ghana','mixtape','south-africa','west-africa','foreign','tanzania','instrumentals','track')
+    allowed_categories = ('gospel','throwback','download-mp3','ghana','mixtape','south-africa','west-africa','foreign','tanzania','instrumentals','track')
 
     def __init__(self):
         super().__init__()
@@ -24,7 +24,8 @@ class JustNaija(BaseEngine):
             ))
           
     def search(self, query=None, page=1, category="music", **kwargs):
-        search_url = self.get_formated_url(
+        search_url = self.get_formated_url(url=kwargs.pop('url'),path='',params='' ) if kwargs.get(
+            'url') else self.get_formated_url(
             query=query,
             path=["search"], 
             page=page, 
@@ -32,7 +33,8 @@ class JustNaija(BaseEngine):
             **kwargs,
         )
         soup = self.get_response_object(url=search_url,**kwargs)
-        return self.parse_parent_object(soup, **kwargs)
+        self.results = self.parse_parent_object(soup, **kwargs)
+        return self.results
 
     def get_query_params(self, query=None,page=None,category=None,**kwargs):
         return {
@@ -42,8 +44,7 @@ class JustNaija(BaseEngine):
         }
 
     def fetch(self, category='track',page=1,**kwargs):
-        soup = self.get_response_object(
-            url=kwargs.pop('url') 
+        soup = self.get_response_object(url = self.get_formated_url(url=kwargs.pop('url'),path='',params='') 
             if kwargs.get('url') 
             else self.get_formated_url(
                 category=category, 
@@ -51,7 +52,8 @@ class JustNaija(BaseEngine):
                 params={},
                 **kwargs
                 ))
-        return self.parse_parent_object(soup,**kwargs)        
+        self.results = self.parse_parent_object(soup,**kwargs)
+        return self.results        
 
     def parse_parent_object(self,soup=None,**kwargs):
         return list(

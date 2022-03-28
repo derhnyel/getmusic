@@ -14,7 +14,8 @@ class Mp3Juices(BaseEngine):
 
     def get_url_path(self, page=None, category=None,**kwargs):
         return ('api', 'search.php?')
-
+    
+    # An API So URL NOT ALLOWED
     def search(self, query=None, page=0, **kwargs):
         response = self.get_response_object(
             url = self.get_formated_url(**kwargs),
@@ -25,7 +26,8 @@ class Mp3Juices(BaseEngine):
                 )
             )
         response = json.loads(response.text.strip("();\n"))["response"]
-        return self.parse_single_object(response,**kwargs) 
+        self.results= self.parse_single_object(response,**kwargs)
+        return self.results
 
     def parse_single_object(self,json_response=None,**kwargs):
         return list(dict(

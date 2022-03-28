@@ -17,6 +17,8 @@ class BaseEngine(ABC):
     site_uri = None
     request_method = None
     GET, POST = "get", "post"
+    formated_url=None
+    results=None
 
     def get_formated_url(
         self,url=None,path=None,page=None, category=None, query=None, method=None,params=None, **kwargs):
