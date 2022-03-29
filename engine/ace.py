@@ -12,7 +12,7 @@ class Ace(BaseEngine):
         self.request_method = self.GET
     
     #AN API SO URL NOT ALLOWED
-    def search(self, query='', **kwargs):
+    def search(self, query='',page=None,**kwargs):
         """Search Engine with query parameter"""
         #get response object from formated url with query
         response = self.get_response_object(
