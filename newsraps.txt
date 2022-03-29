@@ -74,9 +74,12 @@ response = {progress: "/dl.php?id=tid,status: "done"}
 response_type = html
 response = extract convertersbear url and make a get request
 
-Somelike https://gaana.com/
-Domain https://getmusic.live
-Something like check https://getmusic.ng
+https://gaana.com/
+https://soundclick.com
+https://getmusic.live
+https://getmusic.ng
+https://trendybeatz.com
+https://naijamusics.com
 
 
 #def parse_single_object(self,json,**kwargs): 

@@ -1,5 +1,5 @@
 # GETMUSIC 
->"Why must I pay for what makes me Happy ? Why can't I `getmusic` for free ? Let us set music free."
+> *Why must i pay for what makes me Happy ? Why can't i `GETMUSIC` for free ? Let us set music Free.*
 <p align="center"><img width="200" src="https://github.com/derhnyel/getmusic/blob/build-engine/assets/logo.jpg?raw=true" alt="logo">
 </p>
 <hr>
@@ -109,8 +109,15 @@ View all supported engines [here](https://github.com/derhnyel/getmusic/blob/buil
 - TODO: Make Request Handling Asynchronous.
 - TODO: Seperate Engine's parse single object method from search method.
 - TODO: Add more Music Engines.
-- TODO: Scrape some existing Engines for more track details. 
-- TODO: Put Summary for every Engine.
+- TODO: Scrape some existing Engines for more track details. eg. Songslover,NaijaMUsic,JustNaija for track duration and genre. 
+- TODO: Put A Summary for every Engine.
+- TODO: Add a deezer/spotify/youtube search and download via url engine.
+- TODO: Proper Results clean up. Removing unnecesary characters appended to titles and proper formating of other results parameters. 
+
+## Contributing
+
+Want to contribute to Getmusic? Awesome! Check out the [contributing guidelines](docs/CONTRIBUTE.md) to get involved.
+
 
 
 

@@ -6,7 +6,7 @@ class JustNaija(BaseEngine):
     summary = None #get summary
     music_category = "music"
     tracks_page_path = "music-mp3"
-    allowed_categories = ('gospel','throwback','download-mp3','ghana','mixtape','south-africa','west-africa','foreign','tanzania','instrumentals','track')
+    allowed_categories = ('album','gospel','throwback','download-mp3','ghana','mixtape','south-africa','west-africa','foreign','tanzania','instrumentals','track')
 
     def __init__(self):
         super().__init__()
