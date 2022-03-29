@@ -26,7 +26,8 @@ View all supported engines [here](https://github.com/derhnyel/getmusic/blob/buil
 ## Usage
 
 #### Search
-Engines can be searched with query string
+
+Engines can be searched with query string.
 
 ```python
 
@@ -67,7 +68,9 @@ Engines can be searched with query string
 ```
 
 #### Fetch
+
 Latest Items can be fetched from engines based on categories eg. latest albums, tracks, gospel etc. Each engine allowed category is defined.
+
 ```python
 
     import pprint
