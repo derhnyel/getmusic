@@ -3,7 +3,7 @@
 <p align="center"><img width="200" src="https://github.com/derhnyel/getmusic/blob/build-engine/assets/logo.jpg?raw=true" alt="logo">
 </p>
 <hr>
-Getmusic is a package that gives you access to a Whole variety of Music from your favourite artists. It lets you query popular music download sites and scrape for song and album titles, download links to albums and tracks and albums/tracks details.
+Getmusic is a package that gives you access to a variety of music from your favourite artists. It lets you query popular music download sites and scrape for artists, songs and albums titles, download links to albums and tracks and albums/tracks details.
 <hr>
 
 ## Supported Engines
@@ -62,14 +62,14 @@ View all supported engines [here](https://github.com/derhnyel/getmusic/blob/buil
             pprint.pprint(result)
 ```
 ## TODO's
-- TODO: Create an Enum For Some objects and results Items
-- TODO: Create a Caching Mechanism for results
-- TODO: Handle Engine Errors and Exceptions
-- TODO: Make Request Handling Asynchronous
-- TODO: Seperate Engine's parse single object method from search method
-- TODO: ADD more Music Engines
-- TODO: Scrap some Engines For more Track details 
-- TODO: Put Summary For every Engine
+- TODO: Creates Enum for some objects and results items.
+- TODO: Create a Caching Mechanism for results.
+- TODO: Handle Engine Errors and Exceptions.
+- TODO: Make Request Handling Asynchronous.
+- TODO: Seperate Engine's parse single object method from search method.
+- TODO: Add more Music Engines.
+- TODO: Scrape some existing Engines for more track details. 
+- TODO: Put Summary for every Engine.
 
 
 
