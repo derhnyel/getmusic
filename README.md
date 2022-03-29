@@ -1,5 +1,5 @@
 # GETMUSIC 
->               " Why must I pay for what makes me Happy ? Why can't I `getmusic` for free? "
+>               " Why must I pay for what makes me Happy ? Why can't I `getmusic` for free ? "
 <p align="center"><img width="200" src="https://github.com/derhnyel/getmusic/blob/build-engine/assets/logo.jpg?raw=true" alt="logo">
 </p>
 <hr>
@@ -8,7 +8,7 @@ Getmusic is a package that gives you access to a Whole variety of Music from you
 
 ## Supported Engines
 
-Music Engines include:
+Supported music engines include:
 - SongsLover
 - Mp3Juices
 - NaijaMusic
@@ -59,8 +59,17 @@ View all supported engines [here](https://github.com/derhnyel/getmusic/blob/buil
     for k, v in results.items():
         print(f"-------------{k}------------")
         for result in v:
-            pprint.pprint(result)          
-
+            pprint.pprint(result)
 ```
+## TODO's
+- TODO: Create an Enum For Some objects and results Items
+- TODO: Create a Caching Mechanism for results
+- TODO: Handle Engine Errors and Exceptions
+- TODO: Make Request Handling Asynchronous
+- TODO: Seperate Engine's parse single object method from search method
+- TODO: ADD more Music Engines
+- TODO: Scrap some Engines For more Track details 
+- TODO: Put Summary For every Engine
+
 
 
