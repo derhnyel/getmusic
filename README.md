@@ -6,7 +6,7 @@
 **Getmusic** is a package that gives you access to a Whole variety of Music from your favourite artists. It lets you query popular music download sites and scrape for song and album titles, download links to albums and tracks and albums/track details.
 <hr>
 
-### Supported Engines
+## Supported Engines
 
 Music Engines include:
 - SongsLover
@@ -19,7 +19,7 @@ View all supported engines [here](https://github.com/derhnyel/getmusic/blob/buil
 
 
 
-### Development
+## Development
 
 #### Clone the respository
 
