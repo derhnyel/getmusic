@@ -3,7 +3,7 @@
 <p align="center"><img width="200" src="https://github.com/derhnyel/getmusic/blob/build-engine/assets/logo.jpg?raw=true" alt="logo">
 </p>
 <hr>
-Getmusic is a package that gives you access to a Whole variety of Music from your favourite artists. It lets you query popular music download sites and scrape for song and album titles, download links to albums and tracks and albums/track details.
+Getmusic is a package that gives you access to a Whole variety of Music from your favourite artists. It lets you query popular music download sites and scrape for song and album titles, download links to albums and tracks and albums/tracks details.
 <hr>
 
 ## Supported Engines
