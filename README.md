@@ -1,5 +1,5 @@
 # GETMUSIC 
->               " Why must I pay for what makes me Happy ? Why can't I `getmusic` for free ? "
+> *Why must i pay for what makes me Happy ? Why can't i `getmusic` for free ? Let us set music free.*
 <p align="center"><img width="200" src="https://github.com/derhnyel/getmusic/blob/build-engine/assets/logo.jpg?raw=true" alt="logo">
 </p>
 <hr>
