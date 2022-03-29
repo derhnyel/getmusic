@@ -1,12 +1,12 @@
 # GETMUSIC 
-> "*Why must I pay for what makes me Happy? Why can't I `getmusic` for free?*"
+>               "*Why must I pay for what makes me Happy ? Why can't I `getmusic` for free?*"
 <p align="center"><img width="200" src="https://github.com/derhnyel/getmusic/blob/build-engine/assets/logo.jpg?raw=true" alt="logo">
 </p>
 <hr>
-Getmusic is a package that gives you access to a Whole variety of Music from your favourite artists. It lets you query popular music download sites and scrape for song and album titles, download links to albums and tracks and albums/track details. View all supported engines [here](https://github.com/derhnyel/getmusic/blob/build-engine/docs/supported_engines.md?raw=true)
+**Getmusic** is a package that gives you access to a Whole variety of Music from your favourite artists. It lets you query popular music download sites and scrape for song and album titles, download links to albums and tracks and albums/track details.
 <hr>
 
-## Supported Engines
+### Supported Engines
 
 Music Engines include:
 - SongsLover
@@ -19,7 +19,7 @@ View all supported engines [here](https://github.com/derhnyel/getmusic/blob/buil
 
 
 
-## Development
+### Development
 
 #### Clone the respository
 
