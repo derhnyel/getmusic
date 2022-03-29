@@ -24,6 +24,10 @@ View all supported engines [here](https://github.com/derhnyel/getmusic/blob/buil
 - Clone this repo `git clone git@github.com:derhnyel/getmusic.git`
 
 ## Usage
+
+#### Search
+Engines can be searched with query string
+
 ```python
 
     import pprint
@@ -61,6 +65,40 @@ View all supported engines [here](https://github.com/derhnyel/getmusic/blob/buil
         for result in v:
             pprint.pprint(result)
 ```
+
+#### Fetch
+Latest Items can be fetched from engines based on categories eg. latest albums, tracks, gospel etc. Each engine allowed category is defined.
+```python
+
+    import pprint
+
+    from engine.songslover import SongsLover 
+    from engine.justnaija import JustNaija
+    from engine.naijamusic import NaijaMusic
+
+    jn = JustNaija()
+    sl = Songslover()
+    nm = NaijaMusic()
+    
+    # check the allowed category method to see the categories allowed for each engine
+    slresults = sl.fetch(category='albums',page=1)
+    jnresults = jn.fetch(category='album' ,page=1)
+    nmresults = nm.fetch(category='albums-eps',page=1)
+
+    results = dict(
+              Songslover=slresults,
+              JustNaija=jnresults,
+              NaijaMusic=nmresults,
+              )
+
+    # pretty print the result from each engine
+    for k, v in results.items():
+        print(f"-------------{k}------------")
+        for result in v:
+            pprint.pprint(result)
+```
+
+
 ## TODO's
 - TODO: Creates Enum for some objects and results items.
 - TODO: Create a Caching Mechanism for results.
