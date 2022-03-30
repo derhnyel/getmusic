@@ -98,7 +98,7 @@ class SongsLover(BaseEngine):
             ]
             valid_group = list(i for i in regex_group if i != None)
             download_link = valid_group[0].find_previous("a")["href"] if len(valid_group) >= 1 else None
-            return dict(type='track',category=category,artist=artist,title=title,category_download=download_link,category_art=art_link)
+            return dict(type='track',category=category,artist=artist,title=title,download=download_link,art=art_link,details=(title,download_link))
         
         #For category other than tracks
         try:
@@ -147,7 +147,7 @@ class SongsLover(BaseEngine):
                 tracks_details.append((song_title,song_link))    
             except Exception:
                 pass
-        return dict(type='album',category=category,artist=artist,title=title,category_download=download_link,category_art=art_link,category_tracks_details=tracks_details)
+        return dict(type='album',category=category,artist=artist,title=title,download=download_link,art=art_link,details=tracks_details)
     
     
     def get_query_params(self, query=None,**kwargs):

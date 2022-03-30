@@ -43,14 +43,14 @@ View all supported engines [here](https://github.com/derhnyel/getmusic/blob/buil
     jn = JustNaija()
     mj = Mp3Juices()
     ace = Ace() 
-    sl = Songslover()
+    sl = SongsLover()
     nm = NaijaMusic()
 
     slresults = sl.search(*search_args)
     jnresults = jn.search(*search_args)
     aceresults = ace.search(*search_args)
     mjresults = mj.search(*search_args)
-    nmresults = nm.serach(*search_args)
+    nmresults = nm.search(*search_args)
 
     results = dict(
               Songslover=slresults,
@@ -80,7 +80,7 @@ View all supported engines [here](https://github.com/derhnyel/getmusic/blob/buil
     from engine.naijamusic import NaijaMusic
 
     jn = JustNaija()
-    sl = Songslover()
+    sl = SongsLover()
     nm = NaijaMusic()
     
     # check the allowed category method to see the categories allowed for each engine

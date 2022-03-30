@@ -116,9 +116,11 @@ class TestScraping(unittest.TestCase):
         """
         self.assertTrue(len(self.results['title']) >= 1)
         self.assertTrue(len(self.results['category']) >= 1)
-        # self.assertTrue(len(self.results['category']) >= 1)
-        # self.assertTrue(len(self.results['type']) >= 1)
-        # self.assertTrue(len(self.results['category_download']) >= 1)
+        self.assertTrue(len(self.results['artist']) >= 1)
+        self.assertTrue(len(self.results['art']) >= 1)
+        #self.assertTrue(len(self.results['type']) >= 1)
+        #self.assertTrue(len(self.results['download']) >= 1)
+        self.assertTrue(len(self.results['details']) >= 1)
 
     
     #Will be used when search is seperated from parses
@@ -137,7 +139,7 @@ class TestScraping(unittest.TestCase):
         # Different engines have different keys which may be returned or not returned
         # So if all keys are not the same length check that the titles and links length are
         # the same
-        default_keys = ["title", "category"]
+        default_keys = ["title", "category","art","details","artist"]
         for result in self.results:
             default_keys_set = set(map(lambda x: len(result[x]), default_keys))
 

@@ -14,14 +14,14 @@ class Mp3Juices(BaseEngine):
 
 
     # An API So URL NOT ALLOWED
-    def search(self, query='', page=0, **kwargs):
+    def search(self, query='', page=1, **kwargs):
         """Search Engine with query parameter"""
         #get response object from formated url with query
         response = self.get_response_object(
             url = self.get_formated_url(**kwargs),
             payload = self.get_query_params(
                 query=query,
-                page=page,
+                page=page-1,
                 **kwargs
                 )
             )
@@ -43,16 +43,22 @@ class Mp3Juices(BaseEngine):
 
         #Extract track details from json
         return list(dict(
-            category='track',
-            artist=item["artist"],
-            title=item['title'],
-            category_download=item["url"],
-            track_length=item['duration']/60) 
+            art = None,
+            category = 'tracks',
+            type = 'track',
+            artist = item["artist"],
+            title = item['title'],
+            download = item["url"],
+            details = (item['title'],item["url"]),
+            duration = item['duration']/60,) 
             for item in json_response if isinstance(item,dict)
             )           
 
     def get_query_params(self,query=None,page=None,**kwargs):
-        return  dict(q=query,page=page)
+        return  dict(
+            q=query,
+            page=page
+            )
 
     def get_url_path(self, page=None, category=None,**kwargs):
         """PAth to Page Content"""

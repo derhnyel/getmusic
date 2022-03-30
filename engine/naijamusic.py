@@ -113,10 +113,17 @@ class NaijaMusic(BaseEngine):
                     download_link = None
                 finally:    
                     tracklist.append((song_title,download_link))
-            return dict(type = 'album', category = category, artist = artist, title = title, category_download =None, category_art = art_link, category_tracks_details = tracklist)
+            return dict(type = 'album', category = category,artist = artist, title = title,download=None,art = art_link,details = tracklist)
         #for single tracks
         download_link = self.get_download_link(soup,referer,**kwargs)
-        return dict(type = 'track', category = category, artist = artist, title = title, category_download = download_link, category_art = art_link)
+        return dict(
+            type = 'track',
+            category = category, 
+            artist = artist, 
+            title = title, 
+            download = download_link,
+            art = art_link
+            )
       
     def get_download_link(self,soup,referer=None,**kwargs):
         """Get Indivial download link from URL"""

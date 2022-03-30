@@ -28,13 +28,14 @@ class Ace(BaseEngine):
         # search method handles the /query and passes the link extracted to the parse parent object
         
         self.results = list(dict(
-            title=item['title'],
+            title = item['title'],
             artist = item['title'],
-            category ='track',
-            track_lenght=item['duration'],
-            category_art=item['thumbnail'],
-            category_video_palyer= item['player'],
-            category_details = self.parse_parent_object(item['url'],title=item['title'])) for  item in response['data']['items'])
+            category ='tracks/videos',
+            duration=item['duration'],
+            art=item['thumbnail'],
+            player=item['player'],
+            details = self.parse_parent_object(item['url'],title=item['title'])) 
+            for  item in response['data']['items'])
         return self.results    
 
 
@@ -62,10 +63,10 @@ class Ace(BaseEngine):
         
         #Extract details
         return list(dict(
-            file_size=item['fileSize'],
+            size=item['fileSize'],
             quality=item['formatNote'],
             type='track' if item['ext'] in ['mp3', 'ogg','wav',] else 'video' if item['ext'] in ['mp4'] else None,
-            category_download=self.parse_single_object(
+            download=self.parse_single_object(
                 item['url'],
                 title,
                 item['ext'],

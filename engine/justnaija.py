@@ -54,7 +54,7 @@ class JustNaija(BaseEngine):
             self.parse_single_object(
                 soup=self.get_response_object(
                     elem["href"]), category=
-                "album" if ("album-download" in elem["href"] or "mixtape" in elem["href"]) else "track" #check Url to get category of item
+                "albums" if ("album-download" in elem["href"] or "mixtape" in elem["href"]) else "tracks" #check Url to get category of item
                     )
                     for elem in soup.select("main article h3 a") # select a tag to get href
                     )
@@ -87,7 +87,7 @@ class JustNaija(BaseEngine):
         except:
             art_link = None  
         # For album category      
-        if category == 'album':
+        if category == 'albums':
             # get artist/title if the exist
             # if any doesnt exist that means the category is mixtape
             tracks_details=[] 
@@ -96,7 +96,7 @@ class JustNaija(BaseEngine):
             #set category to mixtape    
             except:
                 artist,title = header_elem.text.split(" - ")
-                category = 'mixtape'
+                category = 'mixtapes'
             #continue with category as album    
             else:
                 #select album tracklist and obtain songs title and download_url    
@@ -112,7 +112,15 @@ class JustNaija(BaseEngine):
                         else track_elem.h4.a.text
                     )
                     tracks_details.append((song_title,song_link))
-                return dict(type='album',category=category,artist=artist, title=title, category_download=download_link, category_art=art_link, category_tracks_details=tracks_details)
+                return dict(
+                    type='album',
+                    category=category,
+                    artist=artist,
+                    title=title, 
+                    download=download_link, 
+                    art=art_link, 
+                    details=tracks_details
+                    )
             # eXECUTE FOR MIXTAPES. select MIXTAPES tracklist and obtain songs title and download_url    
             tracklist_elem = soup.select(
                 'article[class="song-info"] div[class="details"] br'
@@ -124,16 +132,32 @@ class JustNaija(BaseEngine):
                 except:
                     continue
                 tracks_details.append(track)
-            return dict(type='album',category=category,artist=artist, title=title, category_art=art_link, category_download=download_link, category_tracks_details=tracks_details)
+            return dict(
+                type='album',
+                category=category,
+                artist=artist, 
+                title=title, 
+                art=art_link, 
+                download=download_link,
+                details=tracks_details,
+                duration=None
+                )
         try:
             head = header_elem.text.split("] ")[1].split(" – ")
         except:
              head = header_elem.text.split(" – ")   
         #fOR SINGLE TRACKS
         artist,title = head if len(head) is 2 else header_elem.text.split("] ")[1].split(" - ")
-        return dict(type='track',category=category,artist=artist, title=title, category_art=art_link, category_download=download_link)
-
-        
+        return dict(
+            type='track',
+            category=category,
+            artist=artist, 
+            title=title, 
+            art=art_link, 
+            download=download_link,
+            details=(title,download_link)
+            )
+    
     def get_url_path(self,category=None,page=None,**kwargs):
         return (
             (self.tracks_page_path, self.page_path, str(page))
