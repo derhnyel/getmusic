@@ -13,7 +13,7 @@ class JustNaija(BaseEngine):
         self.site_uri = "https://justnaija.com/"
         self.request_method = self.GET
     
-    def fetch(self, category='track',page=1,**kwargs):
+    def fetch(self, category='album',page=1,**kwargs):
         """Fetch Latest Items Based on Category and Page Number"""
         # Allows a url too
         soup = self.get_response_object(url = self.get_formated_url(url=kwargs.pop('url'),path='',params='') 
@@ -147,7 +147,11 @@ class JustNaija(BaseEngine):
         except:
              head = header_elem.text.split(" – ")   
         #fOR SINGLE TRACKS
-        artist,title = head if len(head) is 2 else header_elem.text.split("] ")[1].split(" - ")
+        try:
+            artist,title = head if len(head) is 2 else header_elem.text.split("] ")[1].split(" - ")
+        except:
+            artist,title = head if len(head) is 2 else header_elem.text.split("] ")[1].split("–")    
+
         return dict(
             type='track',
             category=category,

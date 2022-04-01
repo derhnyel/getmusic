@@ -92,9 +92,13 @@ class NaijaMusic(BaseEngine):
              artist = title = soup.select(
                     'div[class="the-post-header s-head-modern s-head-large"] h1[class="is-title post-title"]')[0].text  
 
-        # GEt the art link         
-        art_link = 'https:{link}'.format(link=soup.select(
-                'div[class="post-content cf entry-content content-spacious"] picture img')[0]['data-lazy-src'])
+        # GEt the art link
+        try:
+            art_link = 'https:{link}'.format(link=soup.select(
+                'div[class="post-content cf entry-content content-spacious"] p img')[0]['data-lazy-src'])
+        except:
+            art_link = 'https:{link}'.format(link=soup.select(
+                'div[class="post-content cf entry-content content-spacious"] img')[0]['data-lazy-src'])     
 
         # Album / Eps on NaijaMusic usually have tracks leading to their individual Pages
         # Pages are parsed seperately to extract download link via the get_download_link method        
