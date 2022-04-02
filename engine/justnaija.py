@@ -52,14 +52,19 @@ class JustNaija(BaseEngine):
         
         return list(
             self.parse_single_object(
-                soup=self.get_response_object(
-                    elem["href"]), category=
-                "albums" if ("album-download" in elem["href"] or "mixtape" in elem["href"]) else "tracks" #check Url to get category of item
+                url=elem.h3.a,
+                soup=elem, 
+                category="albums" if ("album-download" in elem.h3.a["href"] or "mixtape" in elem.h3.a["href"]) else "tracks" #check Url to get category of item
                     )
-                    for elem in soup.select("main article h3 a") # select a tag to get href
+                    for elem in soup.select("main article") # select a tag to get href
                     )
 
-    def parse_single_object(self, soup=None, category=None,**kwargs):
+    def get_download_link(self,url):
+       song_id = url.split('/')[-2].split("-")[-1].lstrip('m') 
+       download_uri = "https://justnaija.com/music/download/{song_id}/".format(song_id=song_id)
+       return download_uri
+
+    def parse_single_object(self, url=None,soup=None, category=None,**kwargs):
 
         """
         Parses the source code to return
@@ -71,23 +76,24 @@ class JustNaija(BaseEngine):
         :return: parsed title, download_link ,category of soup
         :rtype: dict
         """
-
-        #Get Header element from soup which will be used to get the artist and title based on the category
-        header_elem = soup.select('div[class="mpostheader"] span[class="h1"]')
-        header_elem = header_elem[0] if len(header_elem) >= 1 else soup.select(
-            'div[class="mpostheader"] > h1')[0]
-        # Some Soups do not have Download links
-        try:
-            download_link = soup.select('p[class="song-download"] a')[0]["href"]
-        except Exception:
-            download_link = None
-        # Some soups do not have Art / Thumbnails    
-        try:
-           art_link = soup.select('figure[class="song-thumbnail"] img')[0]["src"]
-        except:
-            art_link = None  
-        # For album category      
         if category == 'albums':
+            soup = self.get_response_object(url["href"])
+            #Get Header element from soup which will be used to get the artist and title based on the category
+            header_elem = soup.select('div[class="mpostheader"] span[class="h1"]')
+            header_elem = header_elem[0] if len(header_elem) >= 1 else soup.select(
+                'div[class="mpostheader"] > h1')[0]
+            # Some Soups do not have Download links
+            try:
+                download_link = soup.select('p[class="song-download"] a')[0]["href"]
+            except Exception:
+                download_link = None
+            # Some soups do not have Art / Thumbnails    
+            try:
+                art_link = soup.select('figure[class="song-thumbnail"] img')[0]["src"]
+            except:
+                art_link = None  
+            # For album category      
+        
             # get artist/title if the exist
             # if any doesnt exist that means the category is mixtape
             tracks_details=[] 
@@ -105,7 +111,7 @@ class JustNaija(BaseEngine):
                 )
                 
                 for track_elem in tracklist_elem:
-                    song_link = track_elem.h4.a["href"]
+                    song_link = self.get_download_link(track_elem.h4.a["href"])
                     song_title = (
                         track_elem.h4.a.text + track_elem.span.text
                         if track_elem.span != None
@@ -142,16 +148,19 @@ class JustNaija(BaseEngine):
                 details=tracks_details,
                 duration=None
                 )
-        try:
-            head = header_elem.text.split("] ")[1].split(" – ")
-        except:
-             head = header_elem.text.split(" – ")   
+        
+        header_elem = url.text
         #fOR SINGLE TRACKS
         try:
-            artist,title = head if len(head) is 2 else header_elem.text.split("] ")[1].split(" - ")
+            artist,title = header_elem.split(" - ")
         except:
-            artist,title = head if len(head) is 2 else header_elem.text.split("] ")[1].split("–")    
-
+            artist,title = header_elem.split("–")
+        
+        try:
+            art_link = soup.select('div[class="image"] img')[0]["data-src"]   
+        except:
+            art_link = None        
+        download_link = self.get_download_link(url["href"])
         return dict(
             type='track',
             category=category,
@@ -177,3 +186,5 @@ class JustNaija(BaseEngine):
             'folder': category,
             'p':page
         }
+
+
