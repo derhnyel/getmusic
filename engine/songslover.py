@@ -98,7 +98,8 @@ class SongsLover(BaseEngine):
             ]
             valid_group = list(i for i in regex_group if i != None)
             download_link = valid_group[0].find_previous("a")["href"] if len(valid_group) >= 1 else None
-            return dict(type='track',category=category,artist=artist,title=title,download=download_link,art=art_link,details=(title,download_link))
+            if download_link!=None:
+                return dict(type='track',category=category,artist=artist,title=title,download=download_link,art=art_link,details=(title,download_link))
         
         #For category other than tracks
         try:
