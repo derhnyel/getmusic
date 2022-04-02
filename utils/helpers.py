@@ -48,25 +48,43 @@ def gen_user_agent() -> str:
        pass
     return user_agent
 
+
+def get_header():
+        """Get fake header for requests"""
+
+        headers = {
+            "Cache-Control": "no-cache",
+            "Connection": "keep-alive",
+            "User-Agent": gen_user_agent(),
+        }
+        return headers
+
 def join_url_path(paths: list):
     try:
         return ('/').join(paths)
     except Exception:    
         return ""
 
-def isvalid_url(url: str) -> bool:
-    urlcheck = validators.url(url)
-    if isinstance(urlcheck, ValidationFailure):
-        return False
-    return urlcheck
+
+import random
 
 
-def isvalid_json(jsonData) -> bool:
-    try:
-        json.loads(jsonData)
-    except ValueError as err:
-        return False
-    return True
+def get_random_element_from_list(list):
+    return random.choice(list)
+
+
+def numerize(num):
+    if num < 10 ** 3:
+        return f"{num:>.0f} "
+    if num < 10 ** 6:
+        return f"{num/10**3:.1f}k"
+    if num < 10 ** 9:
+        return f"{num/10**6:.1f}M"
+    return num
+
+
+def noop():
+    pass
 
 class CacheHandler:
     def cache_fetched_items():

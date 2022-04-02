@@ -105,15 +105,6 @@ class BaseEngine(ABC):
         print("\nFORMATED URL: "+self.formated_url.geturl())
         return self.formated_url.geturl()
 
-    def get_header(self):
-        """Get fake header for requests"""
-
-        headers = {
-            "Cache-Control": "no-cache",
-            "Connection": "keep-alive",
-            "User-Agent": helpers.gen_user_agent(),
-        }
-        return headers
 
 
     def get_response_object(self,url,method=None,payload=None,header=None,**kwargs):
@@ -130,7 +121,7 @@ class BaseEngine(ABC):
         print("\n\n\nRESPONSE FROM URL :  "+url)
 
         # Get header and method either passed into the get_response_object or globally set
-        header= self.get_header() if header is None else header
+        header= helpers.get_header() if header is None else header
         method = self.request_method if method is None else method
         # Handle request based on Request method post and get
         if method==self.POST:
