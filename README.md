@@ -14,6 +14,8 @@ Supported music engines include:
 - NaijaMusic
 - AceMusic
 - JustNaija
+- Lofi
+- Audius
 
 View all supported engines [here](https://github.com/derhnyel/getmusic/blob/build-engine/docs/supported_engines.md?raw=true)
 
@@ -113,6 +115,7 @@ View all supported engines [here](https://github.com/derhnyel/getmusic/blob/buil
 - TODO: Put A Summary for every Engine.
 - TODO: Add a deezer/spotify/youtube search and download via url engine.
 - TODO: Proper Results clean up. Removing unnecesary characters appended to titles and proper formating of other results parameters. 
+- TODO: Create A Cli / Tui Interface
 
 ## Contributing
 
