@@ -5,7 +5,4 @@
 *.exe
 *.exe~
 .vscode
-help/search-engine-parser/
-help/spotui/
-help/argon-music-player/
-help/audius-terminal-player/
+**/help
