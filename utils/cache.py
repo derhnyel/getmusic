@@ -1,35 +1,12 @@
-import inspect
 import pickle
 import hashlib
-
-
-#FILEPATH = os.path.dirname(os.path.abspath(__file__))
-
-
-def __get_caller_stack(active=False):
-        # Get the full stack
-        frame_stack = inspect.stack()
-        # Get one level up from current
-        if active:
-            caller_frame_record = frame_stack[-4]
-        else:
-            caller_frame_record = frame_stack[-1]
-        return caller_frame_record
-        #caller_file_name = CallerFrame.filename  # Filename where caller lives
-
-def __get_caller_path():
-    # Get the module object of the caller
-    calling_script = inspect.getmodule(__get_caller_stack()[0])
-    if calling_script == None:
-       calling_script = inspect.getmodule(__get_caller_stack(active=True)[0])
-       #module name from this path
-    caller_path = os.path.dirname(calling_script.__file__)
-    return caller_path
+import os
 
 class Cache:
-    def __init__(self): 
-        caller_path = __get_caller_path()
-        self.cache = os.path.join(caller_path,"cache")
+    def __init__(self,path): 
+
+        caller_path = path
+        self.cache = os.path.join(caller_path,"__cache__")
         if not os.path.exists(self.cache):
             os.makedirs(self.cache)
         caller_dir_list = os.listdir(caller_path)
@@ -37,19 +14,29 @@ class Cache:
         for cache in self.caller_cache.values():
             if not os.path.exists(cache):
                 os.makedirs(cache)
+    
+    #Do not cache the search / fetch result . Instead Cache the Individual songs url results
+    def put_update(self,caller,url,items,cache=True):
+        cache_path,_= self._cache_hit(caller,url)
+        with open(cache_path, 'wb') as stream:
+            pickle.dump(items, stream)
+            return items,True
 
-    def put_update_retrieve(self,caller,url,results=None,cache=True):
+    def retrieve(self, caller,url,temp_dir=None, cache=True):
+        cache_path,cache_hit = self._cache_hit(caller, url)
+        if cache_hit and cache:
+            with open(cache_path, 'rb') as stream:
+                cache_object = (pickle.load(stream), True)
+            # check if cached object is still in temp directory
+            if temp_dir is None or (temp_dir is not None and os.path.exists(cache_object[0])):
+                return cache_object                
+        return None,False        
+
+    def _cache_hit(self,caller,url):
         urlhash = hashlib.sha256(url.encode("utf-8")).hexdigest()
         caller = caller.lower()
         cache_path = os.path.join(self.caller_cache[caller], urlhash)
-        # Retrieve Item from Cache
-        if os.path.exists(cache_path) and cache:
-            with open(cache_path, 'rb') as stream:
-                return pickle.load(stream), True
-        # Put_Update item in Cache       
-        with open(cache_path, 'wb') as stream:
-            pickle.dump(results, stream)
-            return results, False
+        return cache_path,os.path.exists(cache_path)
 
     def clear(self, caller=None):
         """
@@ -65,5 +52,5 @@ class Cache:
         else:
             caller_cache = self.caller_cache[caller.lower()]
             for _, _, files in os.walk(caller_cache):
-                for f in files:
-                    os.remove(os.path.join(caller_cache, f))
+                for file in files:
+                    os.remove(os.path.join(caller_cache, file))

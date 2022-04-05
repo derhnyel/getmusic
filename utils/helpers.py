@@ -85,7 +85,3 @@ def numerize(num):
 
 def noop():
     pass
-
-class CacheHandler:
-    def cache_fetched_items():
-        return "Fetched results stored in a cache" 
