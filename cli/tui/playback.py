@@ -1,11 +1,6 @@
 import pyglet
 import random
-from enum import Enum
-from cli.download import download_file
-
-
-SUPPORTED_FORMATS = ['au', 'mp2', 'mp3',
-                         'ogg', 'wav', 'wma', 'flac', 'm4a','/']
+from cli.download import DownloadFile
 
 class Duration(object):
     '''Stores the duration of a track'''
@@ -21,193 +16,222 @@ class Duration(object):
         self.minutes = int(sec / 60) % 60
         self.seconds = int(sec) % 60
         self.totalseconds = sec
-    
-    #convert to seconds
 
     def get_timestamp_str(self):
         '''Returns a string-type timestamp in the format of hh:mm:ss'''
         return '{}:{}:{}'.format('{}'.format(self.hours).rjust(2, '0'), '{}'.format(self.minutes).rjust(2, '0'), '{}'.format(self.seconds).rjust(2, '0'))
 
+duration = None
+info = None
+__player__ = None
+__download_uri__ = None
+__tempfile__ = None
+__current_index__ = 0
+__playlist__ = list()
+__shuffle_list__ = list()
+__shuffle_state__ = False
+__repeat_state__ = False
+__SUPPORTED_FORMATS__ = ['au', 'mp2', 'mp3',
+                         'ogg', 'wav', 'wma', 'flac', 'm4a','/']
 
 
-class Playback():
 
-    def __init__(self):
-        self.player = None
-        self.download_uri = None
-        self.info = None
-        self.temp_file = None
-        self.duration = None
-        self.current_index=0
-        self.score =0
-        self.playlist = []
-        self.shuffle = False
-        self.shuffle_list=[]
-        self.repeat = False
+def add_to_playlist(tracklist,valid=False,playing=False):
+    '''Appends the provided files to the __playlist__, first checking for their existence and then if they are supported'''
+    global __playlist__,__current_index__,__shuffle_state__,__shuffle_list__
+    count = 0
+    for track in tracklist:
+        if track in __playlist__:
+            __playlist__.remove(track)    
+        if valid or any(list(format_ for format_ in __SUPPORTED_FORMATS__ if track.endswith(format_))):
+            if playing and len(__playlist__) is not 0:
+                __playlist__.insert(__current_index__+1,track)
+                __current_index__+=1
+            else:
+                __playlist__.append(track)
+                count += 1
+            if __shuffle_state__:
+                __shuffle_list__.append(track) 
+    return count
 
+def remove_from_playlist(index):
+    global __playlist__,__current_index__
+    '''Removes the __playlist__ item at the specified index'''
+    for i in range(len(index) - 1, -1, -1):
+        index = int(index[i])
+        del __playlist__[index - 1]
+        if __current_index__ == index:
+            stop()
+            __current_index__ = 0
+        elif __current_index__ > index:
+            __current_index__ -= 1
 
-    def add_to_playlist(self,tracklist,valid=False,playing=False):
-        '''Appends the provided files to the playlist, first checking for their existence and then if they are supported'''
-        count = 0
-        for track in tracklist:
-            if track in self.playlist:
-                self.playlist.remove(track)    
-            if valid or any(list(_format for format_ in SUPPORTED_FORMAT if track.endswith(format_))):
-                if playing and len(self.playlist) is not 0:
-                    self.playlist.insert(self.current_index+1,track)
-                    self.current_index+=1
-                else:
-                    self.playlist.append(track)
-                    count += 1
-        return count
+def clear_playlist():
+    global __playlist__
+    '''Clears all songs from the __playlist__'''
+    __playlist__.clear()
 
+def player_repeat():
+    global __player__
+    if __player__ is not None:
+        __player__.loop =  False if __player__.loop else True
 
-    def rem_from_playlist(self,index):
-        '''Removes the playlist item at the specified index'''
-        for i in range(len(index) - 1, -1, -1):
-            index = int(index[i])
-            del self.playlist[index - 1]
+def repeat():
+    global __repeat_state__
+    __repeat_state__ = False if __repeat_state__ else True
 
-            if self.current_index == index:
-                self.stop()
-                self.current_index = 0
-            elif self.current_index > index:
-                self.current_index -= 1
+def shuffle():
+    global __shuffle_list__,__shuffle_state__
+    if not __shuffle_state__:
+        __shuffle_list__ = random.shuffle(__playlist__)
+        __shuffle_state__=True
+    else:
+        __shuffle_state__=False  
 
+def seek(timestamp):
+    global __player__,duration
+    '''Seeks to the provided timestamp'''
+    if __player__ is not None:
+        __player__.source.seek(timestamp)
+    duration = duration-timestamp
 
-    def clear_playlist():
-        '''Clears all songs from the playlist'''
-        self.playlist.clear()
-
-    def Repeat(self):
-        if self.player is not None:
-           self.player.loop =  False if self.player.loop else True
+def volume(level):
+    global __player__
+    level = level/100  
+    __player__.volume(level)
+        
+def stream(__download_uri__,referer=None):
+    global download_url,__tempfile__
+    ##stream/ download audio files
+    if __download_uri__.startswith('https://') and (not __download_uri__.endswith('zip')):
+        download_url = __download_uri__
+        __tempfile__ = DownloadFile(__download_uri__, referer=referer)
+        add_to_playlist([__tempfile__], valid=True,playing=True)
+        stop()
+        start(__tempfile__)
             
-    def stream(self,download_uri,referer=None):
-        ##stream/ download audio files
-        if download_uri.startswith('https://') and (not download_uri.endswith('zip')):
-            self.download_uri = download_uri
-            self.temp_file = download_file(download_uri, referer=referer)
-            self.add_to_playlist([self.temp_file], valid=True,playing=True)
-            self.stop()
-            self.start_play(self.temp_file)
-          
-    def start_play(self,audio_file):
-        '''Begins playback of the specified file'''
+def start(audio_file):
+    '''Begins playback of the specified file'''
+    global __player__
+    if __player__ is not None:
+        stop()
+    # Create new __player__
+    __player__ = pyglet.media.Player()
+    #__player__.on_eos = play_next
+    __player__.push_handlers(on_eos=play_next)
+    source = pyglet.media.load(audio_file,streaming=True)
+    __player__.queue(source)
+    __player__.play()
+    get_info()
+    #__player__.dispatch_event("on_eos")
 
-        if self.player is not None:
-            self.stop()
-        # Create new player
-        self.player = pyglet.media.Player()
-        self.player.on_eos = self.on_eos
-        self.player.push_handlers(on_eos=self.player.on_eos)
-        source = pyglet.media.load(audio_file,streaming=True)
-        self.player.queue(source)
-        self.player.play()
-        self.get_info()
-            
-    def on_eos(self):
-        self.play_next()
+def stop():
+    global __player__
+    if __player__ is not None:
+        __player__.pause()
+        __player__ = None
 
-    def stop(self):
-        if self.player is not None:
-            self.player.pause()
-            self.player = None
+def play():
+    global __shuffle_list__,__current_index__,__playlist__
+    if __current_index__ < len(__playlist__):
+            if __shuffle_state__:
+                start(__shuffle_list__[__current_index__]) 
+            else: start(__playlist__[__current_index__])
+    elif __tempfile__ is not None:
+        start(__tempfile__)
 
-    def play_next(self):
-        '''Advances the current track index to the next track in the playlist'''
-        if self.shuffle and len(self.playlist) > 1:
-            if self.current_index == self.shuffle_list[-1]: 
-                self.current_index = random.randint(0,len(self.playlist))
-                if self.current_index not in self.shuffle_list:
-                    self.shuffle_list.append(self.current_index)
-                    self.score += 1
-            else:
-                self.current_index=self.shuffle_list[self.score]
-                self.score += 1
+def play_pause():
+    global __player__
+    '''Toggles between playing and pausing of the current playback'''
+    if __player__ is not None:
+        if __player__.playing:
+            __player__.pause()
         else:
-            if len(self.playlist)-1 > self.current_index:
-                if not self.repeat:
-                    self.current_index = (self.current_index) + 1 #% len(self.playlist)
-            else:
-                # playlist.clear if repeat is not on playlist
-                # ||||| if repeat on playlist
-                self.current_index = 0
-        self.play_current()
-            
-    def play_prev(self):
-        '''Returns the current track index to the previous track in the playlist'''
-        if self.shuffle and len(self.playlist) > 1:
-            if self.current_index == self.shuffle_list[-1]:
-                self.current_index = self.shuffle_list[-2]
-                if self.score < 1:
-                    self.score=0
-                else:
-                    self.score-=1
-            else:
-                self.current_index=self.shuffle_list[self.score]
-                self.score -= 1
-        if len(self.playlist) > 0 and self.current_index > 0:
-            if not self.repeat:
-                self.current_index = (self.current_index - 1) #% len(self.playlist)
-        else:
-            self.current_index=0
-        self.play_current()    
-    
-    def play_playlist_no(self,playlist_no):
-        '''Plays the song at the specified index in the playlist'''
-        self.current_index = playlist_no - 1
-        self.play_current()
+            __player__.play()
+    else:
+        play()
 
-    def seek(self,timestamp):
-        '''Seeks to the provided timestamp'''
-        if self.player is not None:
-            self.player.source.seek(timestamp)
-        self.duration = self.duration-timestamp    
+def play_next():
+    global __playlist__,__current_index__,__repeat_state__
+    '''Advances the current track index to the next track in the __playlist__'''
+    if len(__playlist__)-1 > __current_index__:
+        if not __repeat_state__:
+            __current_index__ = (__current_index__) + 1 #% len(__playlist__)
+    else:
+        # stop() if repeat is not on __playlist__
+        # ||||| if repeat on __playlist__
+        __current_index__ = 0
+    play()
+        
+def play_previous():
+    global __playlist__,__current_index__
+    '''Returns the current track index to the previous track in the __playlist__'''
+    if len(__playlist__) > 0 and __current_index__ > 0:
+        if not __repeat_state__:
+            __current_index__ = (__current_index__ - 1) #% len(__playlist__)
+    else:
+        __current_index__=0
+    play()    
 
-    def play_pause(self):
-        '''Toggles between playing and pausing of the current playback'''
-        if self.player is not None:
-            if self.player.playing:
-                self.player.pause()
-            else:
-                self.player.play()
-        else:
-            self.play_current()
+def play_playlist_no(playlist_no):
+    global __current_index__
+    '''Plays the song at the specified index in the __playlist__'''
+    __current_index__ = playlist_no - 1
+    play()
 
-    def play_current(self):
-        if self.current_index < len(self.playlist):
-                self.start_play(self.playlist[self.current_index])
-        elif self.temp_file is not None:
-            self.start_play(self.temp_file)
-    
-    def get_time(self):
-        '''Returns the current playing time of the current track.'''
-        duration = Duration()
-        if (self.player is not None):
-            duration.set_from_sec(self.player.time)
-        return duration    
- 
-    def get_duration(self):
-        '''Returns the total playing time of the current track.'''
-        duration = Duration()
-        if (self.player is not None):
-            if self.player.source.duration:
-                duration.set_from_sec(self.player.source.duration)
-        return duration        
-    
-    def get_info(self):
-        '''Returns a tuple of three objects: trackInfo, audioFormat, and trackDuration.
-        Available trackInfo properties (accessible as info.property_name):     title, album, author, year, track, genre, copyright, comment
-        Available audioFormat properties (accessible as audiof.property_name): channels, sample_size, sample_rate
-        Available trackDuration properties (accessible as trackDuration.property_name): hours, minutes, seconds'''
-        info = None
-        audiof = None
-        if (self.player is not None):
-            if self.player.source.info:
-                info = self.player.source.info
-            if self.player.source.audio_format:
-                audiof = self.player.source.audio_format
-        duration = self.get_duration().get_timestamp_str()
-        self.info = dict(info=info, audio_format=audiof, duration=duration)
-        self.duration = sum(x * float(t) for x, t in zip([3600, 60, 1], duration.split(":")))
+
+def get_playback_state():
+    return __player__.playing
+def get_shuffle_state():
+    return __shuffle_state__
+
+def get_repeat_state():
+    return __repeat_state__
+
+def get_playlist():
+    return __playlist__
+
+def get_shufflelist():
+    return __shuffle_list__    
+
+def get_current_track():
+    if __current_index__ < len(__playlist__):
+        return __playlist__[__current_index__]
+    else:
+        return None
+
+def get_current_index():
+    return __current_index__
+
+def get_time():
+    global __player__
+    '''Returns the current playing time of the current track.'''
+    duration = Duration()
+    if (__player__ is not None):
+        duration.set_from_sec(__player__.time)
+    return duration    
+
+def get_duration():
+    global __player__
+    '''Returns the total playing time of the current track.'''
+    duration = Duration()
+    if (__player__ is not None):
+        if __player__.source.duration:
+            duration.set_from_sec(__player__.source.duration)
+    return duration        
+
+def get_info():
+    global __player__,info,duration
+    info = None
+    audiof = None
+    if (__player__ is not None):
+        if __player__.source.info:
+            info = __player__.source.info
+        if __player__.source.audio_format:
+            audiof = __player__.source.audio_format
+    duration_ = get_duration().get_timestamp_str()
+    info = dict(info=info, audio_format=audiof, duration=duration_)
+    duration = sum(x * float(t) for x, t in zip([3600, 60, 1], duration_.split(":")))
+
+
+#pyglet.app.run()

@@ -1,6 +1,7 @@
 import curses
+import time
 
-def display(root,SPLASH_TEXT)
+def display(root,SPLASH_TEXT):
    '''Display a splash screen'''
    root.border(0)
    root.refresh()
@@ -27,5 +28,5 @@ def display(root,SPLASH_TEXT)
         if (counter >= len(SPLASH_TEXT)):
             complete = True
 
-    time.sleep(1)
-    curses.beep()
+   time.sleep(1)
+   curses.beep()

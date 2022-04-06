@@ -10,7 +10,7 @@ TEMP_DIR = tempfile.gettempdir()
 NAME = os.path.basename(__file__)[:-3]
 CACHE = Cache(os.path.dirname(os.path.abspath(__file__)))
 
-def download_file(uri, referer=None):
+def DownloadFile(uri, referer=None):
     """Download Mp3 Files Into Temp Dir"""
     temp_name,cache_hit = CACHE.retrieve(NAME,uri,TEMP_DIR)
     #check cache hit
