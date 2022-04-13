@@ -5,8 +5,8 @@ from engine.root import BaseEngine
 class NaijaMusic(BaseEngine):
     engine_name = "naijamusic"
     summary = None #get summary information
-    allowed_categories = ('albums-eps', 'new','mixtape','gospel','south-african-music','ghana','tag')
-
+    allowed_fetch_categories = ['albums-eps', 'new','mixtape','gospel','south-african-music','ghana','tag']
+    allowed_search_categories = ['tracks']
     def __init__(self):
         super().__init__()
         self.site_uri = "https://www.naijamusic.com.ng/"

@@ -6,7 +6,8 @@ class JustNaija(BaseEngine):
     summary = None #get summary
     music_category = "music"
     tracks_page_path = "music-mp3"
-    allowed_categories = ('album','gospel','throwback','download-mp3','ghana','mixtape','south-africa','west-africa','foreign','tanzania','instrumentals','track')
+    allowed_fetch_categories = ['album','gospel','throwback','download-mp3','ghana','mixtape','south-africa','west-africa','foreign','tanzania','instrumentals','track']
+    allowed_search_categories = ['album','music']
 
     def __init__(self):
         super().__init__()
@@ -89,7 +90,7 @@ class JustNaija(BaseEngine):
                 download_link = None
             # Some soups do not have Art / Thumbnails    
             try:
-                art_link = soup.select('figure[class="song-thumbnail"] img')[0]["src"]
+                art_link = soup.select('figure[class="song-thumbnail"] img')[0]["data-src"]
             except:
                 art_link = None  
             # For album category      
@@ -168,7 +169,6 @@ class JustNaija(BaseEngine):
             title=title, 
             art=art_link, 
             download=download_link,
-            details=(title,download_link)
             )
     
     def get_url_path(self,category=None,page=None,**kwargs):

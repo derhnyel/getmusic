@@ -1,12 +1,13 @@
-
-from engine.root import BaseEngine
 import json
+from engine.root import BaseEngine
+
 
 class Mp3Juices(BaseEngine):
 
     engine_name = "Mp3Juices"
     summary = None #Get Summary
-
+    allowed_search_categories = allowed_fetch_categories=[None]
+    
     def __init__(self):
         super().__init__()
         self.site_uri = "https://myfreemp3juices.cc/"

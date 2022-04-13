@@ -1,10 +1,12 @@
-from engine.root import BaseEngine
 import json
+from engine.root import BaseEngine
+
 
 class Ace(BaseEngine):
     
     engine_name = "Ace"
     summary = None #get summary
+    allowed_search_categories = allowed_fetch_categories=[None]
 
     def __init__(self):
         super().__init__()
@@ -28,6 +30,7 @@ class Ace(BaseEngine):
         # search method handles the /query and passes the link extracted to the parse parent object
         
         self.results = list(dict(
+            type=None,
             title = item['title'],
             artist = item['title'],
             category ='tracks/videos',

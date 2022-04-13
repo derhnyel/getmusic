@@ -1,10 +1,6 @@
-from typing import Any
-from fake_useragent import UserAgent
+import time
 import random
-import validators
-from validators import ValidationFailure
-import json
-
+from fake_useragent import UserAgent
 
 USER_AGENTS = [
     "Mozilla/5.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; AcooBrowser; .NET CLR 1.1.4322; .NET CLR 2.0.50727)",
@@ -65,23 +61,25 @@ def join_url_path(paths: list):
     except Exception:    
         return ""
 
-
-import random
-
-
 def get_random_element_from_list(list):
     return random.choice(list)
 
+def debounce(s):
+    """Decorator ensures function that can only be called once every `s` seconds.
+    """
+    def decorate(f):
+        t = None
 
-def numerize(num):
-    if num < 10 ** 3:
-        return f"{num:>.0f} "
-    if num < 10 ** 6:
-        return f"{num/10**3:.1f}k"
-    if num < 10 ** 9:
-        return f"{num/10**6:.1f}M"
-    return num
+        def wrapped(*args, **kwargs):
+            nonlocal t
+            t_ = time.time()
+            if t is None or t_ - t >= s:
+                result = f(*args, **kwargs)
+                t = time.time()
+                return result
 
+        return wrapped
 
-def noop():
-    pass
+    return decorate
+def truncate(text, max_length):
+    return (text[:max_length - 3] + "..") if len(text) >= max_length else text

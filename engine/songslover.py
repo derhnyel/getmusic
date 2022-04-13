@@ -6,8 +6,9 @@ class SongsLover(BaseEngine):
     engine_name = "Songslover"
     summary = None #Get Summary
 
-    allowed_categories = ('albums','tracks','best-of-the-month','mixtapes','music-albums')
-    
+    allowed_fetch_categories = ['albums','tracks','best-of-the-month','mixtapes','music-albums']
+    allowed_search_categories = [None]
+
     def __init__(self):
         super().__init__()
         self.site_uri = "https://songslover.vip/"
@@ -99,7 +100,7 @@ class SongsLover(BaseEngine):
             valid_group = list(i for i in regex_group if i != None)
             download_link = valid_group[0].find_previous("a")["href"] if len(valid_group) >= 1 else None
             if download_link!=None:
-                return dict(type='track',category=category,artist=artist,title=title,download=download_link,art=art_link,details=(title,download_link))
+                return dict(type='track',category=category,artist=artist,title=title,download=download_link,art=art_link)
         
         #For category other than tracks
         try:
@@ -158,6 +159,7 @@ class SongsLover(BaseEngine):
 
     def get_url_path(self, page=None, category=None):
         """PAth to Page Content"""
+        if category=='track' or category=='album': category+'s'
         if page <= 0:
             page = 1
         if page >= 256:
