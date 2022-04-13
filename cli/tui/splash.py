@@ -1,7 +1,9 @@
-import curses
-import time
 
-def display(root,SPLASH_TEXT):
+import time
+import curses
+
+
+def display(SPLASH_TEXT,root):
    '''Display a splash screen'''
    root.border(0)
    root.refresh()
@@ -30,3 +32,5 @@ def display(root,SPLASH_TEXT):
 
    time.sleep(1)
    curses.beep()
+display("                          GETMUSIC                          ",root = curses.initscr())
+
