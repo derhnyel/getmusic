@@ -10,7 +10,8 @@ class SongsLover(BaseEngine):
     
     def __init__(self):
         super().__init__()
-        self.site_uri = "https://songslover.vip/"
+        # self.site_uri = "https://songslover.vip/"
+        self.site_uri = "https://songslover.me/"
         self.request_method = self.GET
 
     def fetch(self,category='tracks',page=1,**kwargs):
@@ -71,7 +72,7 @@ class SongsLover(BaseEngine):
 
         # Some div contain title and Artist while some do not
         try:
-            artist, title = soup.select(
+            title, artist = soup.select(
                 'div[class="post-inner"] h1 span[itemprop="name"]'
             )[0].text.split(" –")
             artist, title = artist.strip(), title.strip()    

@@ -5,8 +5,9 @@ certifi==2021.10.8
 charset-normalizer==2.0.12
 click==8.0.4
 decorator==5.1.1
-fake-useragent==0.1.11
+fake-useragent==1.4.0
 idna==3.3
+importlib-resources==6.1.1
 isort==5.10.1
 lazy-object-proxy==1.7.1
 mccabe==0.6.1
@@ -19,7 +20,8 @@ six==1.16.0
 soupsieve==2.3.1
 toml==0.10.2
 tomli==2.0.1
-typing-extensions==4.1.1
+typing_extensions==4.1.1
 urllib3==1.26.9
 validators==0.18.2
 wrapt==1.13.3
+zipp==3.17.0
