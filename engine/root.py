@@ -75,7 +75,12 @@ class BaseEngine(ABC):
         #Each engine should have its own fetch single objects defined"""
         raise NotImplementedError()  
 
-    def get_formated_url(self,url=None,path=None,page=None, category=None, query=None, method=None,params=None, **kwargs):
+    def get_formated_url(
+        self,url=None,path=None,
+        page=None, category=None, 
+        query=None, method=None,
+        params=None, **kwargs
+    ):
         """
         Return a formatted Music Engine search or fetch url
         """
@@ -102,7 +107,7 @@ class BaseEngine(ABC):
             else url._replace(path=url_path)
         )
 
-        print("\nFORMATED URL: "+self.formated_url.geturl())
+        # print("\nFORMATED URL: "+self.formated_url.geturl())
         return self.formated_url.geturl()
 
 
@@ -118,7 +123,7 @@ class BaseEngine(ABC):
         :header: dict -> The request header
         :return: Html source code or Json of a given URL.
         """
-        print("\n\n\nRESPONSE FROM URL :  "+url)
+        # print("\n\n\nRESPONSE FROM URL :  "+url)
 
         # Get header and method either passed into the get_response_object or globally set
         header= helpers.get_header() if header is None else header

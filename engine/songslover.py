@@ -1,5 +1,6 @@
 import re
 from engine.root import BaseEngine
+from tqdm import tqdm
 
 class SongsLover(BaseEngine):
     
@@ -53,7 +54,7 @@ class SongsLover(BaseEngine):
                 self.get_response_object(elem["href"],**kwargs),
                 category=elem['href'].split('/')[3],
                 **kwargs)
-            for elem in soup.select("article h2 a")
+            for elem in tqdm(soup.select("article h2 a"))
         )
 
     def parse_single_object(self,soup, category=None, **kwargs):
@@ -71,15 +72,9 @@ class SongsLover(BaseEngine):
         # THis is parsed to accomadate some of the changes 
 
         # Some div contain title and Artist while some do not
-        try:
-            title, artist = soup.select(
-                'div[class="post-inner"] h1 span[itemprop="name"]'
-            )[0].text.split(" –")
-            artist, title = artist.strip(), title.strip()    
-        except Exception:
-            artist = title = soup.select(
-                'div[class="post-inner"] h1 span[itemprop="name"]'
-            )[0].text
+        description = soup.select(
+            'div[class="post-inner"] h1 span[itemprop="name"]'
+        )[0].text.strip()
 
         #Some Soups do not have art links    
         try:
@@ -100,7 +95,11 @@ class SongsLover(BaseEngine):
             valid_group = list(i for i in regex_group if i != None)
             download_link = valid_group[0].find_previous("a")["href"] if len(valid_group) >= 1 else None
             if download_link!=None:
-                return dict(type='track',category=category,artist=artist,title=title,download=download_link,art=art_link,details=(title,download_link))
+                return dict(
+                    type='track',category=category,
+                    description=description,download=download_link,
+                    art=art_link,
+                    details=(description,download_link))
         
         #For category other than tracks
         try:
@@ -109,6 +108,7 @@ class SongsLover(BaseEngine):
             ).find_previous("a")["href"]
         except Exception:
             download_link = None
+            
         # Get soup element to extract Song title and Song links for albums   
         response_group = [
             soup.select("li strong a"),
@@ -149,7 +149,13 @@ class SongsLover(BaseEngine):
                 tracks_details.append((song_title,song_link))    
             except Exception:
                 pass
-        return dict(type='album',category=category,artist=artist,title=title,download=download_link,art=art_link,details=tracks_details)
+        return dict(
+            type='album',category=category,
+            description=description,
+            download=download_link,
+            art=art_link,
+            details=tracks_details
+        )
     
     
     def get_query_params(self, query=None,**kwargs):
