@@ -1,4 +1,5 @@
 import requests
+import pdb
 #import asyncio
 #import aiohttp
 
@@ -30,16 +31,16 @@ class BaseEngine(ABC):
 
     summary= None
     
-    #NAme of the Music Engine
+    #Name of the Music Engine
     engine_name=None
     
-    #BAsically just allowed url paths which can be queried
+    #Basically just allowed url paths which can be queried
     allowed_categories=None
 
     # Music Engine unformatted URL
     site_uri = None
     
-    # Music Engine request method. CAn be either Post or GEt
+    # Music Engine request method. Can be either Post or GEt
     request_method = None 
     GET, POST = "get", "post"
 
@@ -52,6 +53,8 @@ class BaseEngine(ABC):
     # Music Search or Fetch Engine Results
     results=None
 
+    def __init__(self) -> None:
+        super().__init__()
 
     @abstractmethod
     def search(self, query=None, page=None, category=None,**kwargs):
@@ -86,17 +89,18 @@ class BaseEngine(ABC):
         """
         # Url could be set to default site Url or A custom url can be inputted 
         url = urlparse(self.site_uri) if url is None else urlparse(url)
+        
         # Get Url paths and Query Params based on custom path or params passed in or the get_url_path/get_query_params method 
         url_path = helpers.join_url_path(self.get_url_path(
-            page=page,
-            category=category,
-            **kwargs)
+            page=page,category=category,**kwargs)
             ) if path is None else helpers.join_url_path(path)    
+        
         params = self.get_query_params(
             query=query,
             page=page,
             category=category,
             **kwargs) if params is None else params
+        
         # Defined request method to Get/Post and use queries where applicable     
         method = self.request_method if method is None else method
         self.formated_url = (
@@ -109,7 +113,6 @@ class BaseEngine(ABC):
 
         # print("\nFORMATED URL: "+self.formated_url.geturl())
         return self.formated_url.geturl()
-
 
 
     def get_response_object(self,url,method=None,payload=None,header=None,**kwargs):
@@ -148,5 +151,5 @@ class BaseEngine(ABC):
            could then be fetched passed into parse single object to retrieve objects tiltle,download link,etc """
         # Override if engine needs to parse parent object"""
         return 
-    
+        
 
