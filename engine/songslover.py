@@ -44,8 +44,7 @@ class SongsLover(BaseEngine):
         self.results = self.parse_parent_object(soup,**kwargs)
         return self.results    
         
-    
-        
+           
     def parse_parent_object(self, soup,**kwargs):
         """
         Parses Engine Soup for links to individual items 
@@ -177,7 +176,7 @@ class SongsLover(BaseEngine):
             "ITunes","Amazon Music","Amazon Store","Buy Album","Download Album",]
         
         response_group = [
-            soup.select('div[class="post-inner"] div[class="entry"] ol li'),
+            # soup.select('div[id="main-content"] div[class="post-inner"] div[class="entry"] ol li'),
             soup.select("li strong a"),
             soup.select("p span strong a"),
             soup.select('tr td div[class="wpmd"] a'),
@@ -193,27 +192,24 @@ class SongsLover(BaseEngine):
         tracks_details = []
         
         for element in response_elements:
+            
+            # Skip song if title or link isn't avaible
+            song_title = element.text
+            if song_title is None:
+                continue
             try:
-                
-                # Skip song if title or link isn't avaible
-                song_title = element.text
-                if song_title is None:
-                    continue
-                try:
-                    song_link = element["href"]
-                except KeyError:
-                    continue
-                
-                # Remove Certain title's with these keywords from result
-                keyword = [i for i in keywords if i in song_title]
-                if any(keyword):
-                    continue
+                song_link = element["href"]
+            except KeyError:
+                continue
+            
+            # Remove Certain title's with these keywords from result
+            keyword = [i for i in keywords if i in song_title]
+            if any(keyword):
+                continue
 
-                # Some elements Have 'Download' appended before the song Title
-                # elif song_title.startswith("Download"):
-                #     song_title = song_title[8:]
-                tracks_details.append((song_title,song_link))    
-            except Exception:
-                pass
-        
+            # Some elements Have 'Download' appended before the song Title
+            # elif song_title.startswith("Download"):
+            #     song_title = song_title[8:]
+            tracks_details.append(dict(title=song_title,download_link=song_link)) 
+
         return tracks_details
