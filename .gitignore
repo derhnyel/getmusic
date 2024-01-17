@@ -4,3 +4,6 @@
 *.exe
 *.exe~
 .vscode
+/venv
+main.py
+.DS_Store
