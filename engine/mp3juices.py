@@ -17,6 +17,8 @@ class Mp3Juices(BaseEngine):
     def search(self, query='', page=1, **kwargs):
         """Search Engine with query parameter"""
         #get response object from formated url with query
+        
+        import pdb; pdb.set_trace()
         response = self.get_response_object(
             url = self.get_formated_url(**kwargs),
             payload = self.get_query_params(

@@ -1,6 +1,8 @@
+import asyncio, time
 import re
 from engine.root import BaseEngine
 from tqdm import tqdm
+
 
 class SongsLover(BaseEngine):
     
@@ -14,7 +16,7 @@ class SongsLover(BaseEngine):
         self.site_uri = "https://songslover.me/"
         self.request_method = self.GET
 
-    def fetch(self,category='tracks',page=1,**kwargs):
+    async def fetch(self,category='tracks',page=1,**kwargs):
 
         """Fetch Latest Items Based on Category and Page Number"""
         
@@ -23,7 +25,7 @@ class SongsLover(BaseEngine):
             url = self.get_formated_url(url=kwargs.pop('url'),path='',params='') if kwargs.get(
             'url') else self.get_formated_url(category=category, page=page, params={},**kwargs)) 
         
-        self.results=self.parse_parent_object(soup,**kwargs)
+        self.results = await self.parse_parent_object(soup,**kwargs)
         return self.results
 
     def search(self,query='',page=1,category=None,**kwargs):
@@ -45,18 +47,39 @@ class SongsLover(BaseEngine):
         return self.results    
         
            
-    def parse_parent_object(self, soup,**kwargs):
+    async def parse_parent_object(self, soup,**kwargs):
         """
         Parses Engine Soup for links to individual items 
         and parse those links then pass thier soups to parse single object
         """
-        return list(
+        
+        # TODO: make this async
+        
+        # Async part
+        # start = time.perf_counter()
+        # result = await asyncio.gather(
+        #     *(self.parse_single_object(
+        #         self.get_response_object(elem["href"], **kwargs),
+        #         category=elem['href'].split('/')[3],
+        #         **kwargs)
+        #     for elem in tqdm(soup.select("article h2 a")))
+        # )
+        # end = time.perf_counter() - start
+        
+        start = time.perf_counter()
+        result = list(
             self.parse_single_object(
                 self.get_response_object(elem["href"], **kwargs),
                 category=elem['href'].split('/')[3],
                 **kwargs)
             for elem in tqdm(soup.select("article h2 a"))
         )
+        end = start - time.perf_counter()
+        
+        print(end)
+        return result
+           
+        
 
     def parse_single_object(self, soup, category=None, **kwargs):
         """
@@ -84,7 +107,9 @@ class SongsLover(BaseEngine):
             if download_link!=None:
                 return dict(type='track',category=category,artist=artist,title=title,
                     download=download_link,art=art_link)
-            
+        
+        
+        # TODO: Make this async    
         # Get song and individual download link for song
         else:
             track_details = self._get_individual_download_link(soup)

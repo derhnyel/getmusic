@@ -1,7 +1,7 @@
 import requests
 import pdb
-#import asyncio
-#import aiohttp
+import asyncio
+import aiohttp
 
 from urllib.parse import urlparse, urlencode
 from abc import ABC, abstractmethod
@@ -29,7 +29,7 @@ class BaseEngine(ABC):
     #TODO: Put Summary For every Engine
 
 
-    summary= None
+    summary = None
     
     #Name of the Music Engine
     engine_name=None
@@ -137,6 +137,34 @@ class BaseEngine(ABC):
         webpage = requests.get(url, headers=header)
         soup = bs4(webpage.content, "html.parser")
         return soup
+    
+    async def fetch_page_content(self, session, url, method=None, payload=None, headers=None): 
+        header = helpers.get_header() if header is None else header
+        method = helpers.request_method if method is None else method
+
+        if hasattr(session, method.lower()):
+
+
+
+    async def get_response_object_async(self, url, method=None, payload=None, headers=None, **kwargs):
+        """
+        Returns the source code of a webpage.
+
+        :rtype: Json/soup
+        :param url: URL to pull it's source code
+        :method: str -> request method post/get
+        :payload: dict -> A payload For post requests
+        :header: dict -> The request header
+        :return: Html source code or Json of a given URL.
+        """ 
+
+        header = helpers.get_header() if header is None else header
+        method = helpers.request_method if method is None else method
+        pass
+        
+
+
+
 
     def get_query_params(self, query=None,page=None,category=None,**kwargs):
         """ This  function should be overwritten to return a dictionary of query params"""
@@ -152,4 +180,5 @@ class BaseEngine(ABC):
         # Override if engine needs to parse parent object"""
         return 
         
-
+    async def perform_operation(self):
+        pass

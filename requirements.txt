@@ -26,3 +26,7 @@ urllib3==1.26.9
 validators==0.18.2
 wrapt==1.13.3
 zipp==3.17.0
+
+
+
+aiomultiprocess
