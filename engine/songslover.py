@@ -1,7 +1,11 @@
 import asyncio, time
 import re
+import aiohttp
 from engine.root import BaseEngine
 from tqdm import tqdm
+from itertools import repeat
+from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor
+
 
 
 class SongsLover(BaseEngine):
@@ -16,16 +20,60 @@ class SongsLover(BaseEngine):
         self.site_uri = "https://songslover.me/"
         self.request_method = self.GET
 
-    async def fetch(self,category='tracks',page=1,**kwargs):
+    def custom_fetch(self, category="tracks", page=1, **kwargs):
+        # Parse Uri
+        url = self.get_formated_url(url=kwargs.pop('url'),path="",params='') if kwargs 
+        else self.get_formated_url(category=category,page=page,params={},**kwargs)
+        
+        # Get Page containing tracks
+        soup = self.get_response_object(url)
 
+        # Extract track links from page
+        track_list = [elem['href'] for elem in soup.select("article h2 a")]
+
+        # extract each detail for each track parallelly
+        with ProcessPoolExecutor() as executor:
+            result = executor.map(self.custom_parser, track_list, repeat(category))
+ 
+        return [elem for elem in result]
+            
+
+    def custom_parser(self, link, category, **kwargs):
+
+        # Get song page
+        soup = self.get_response_object(link)
+
+        # Extract artist, song title, art and download_link
+        artist, title = self._get_description(soup)
+        art_link = self._get_art_link(soup)
+        download_link = self._get_download_link(soup, category)
+        
+
+        # For track extract download link.    
+        if category == "tracks":
+            if download_link!=None:
+                return dict(type='track',category=category,artist=artist,title=title,
+                    download=download_link,art=art_link)
+        
+         
+        # For album extract get each song and their link
+        else:
+            track_details = self._get_individual_download_link(soup)
+            return dict(type='album',category=category,artist=artist,title=title,
+                download=download_link,art=art_link,details=track_details)
+
+
+
+    def fetch(self,category='tracks',page=1,**kwargs):
         """Fetch Latest Items Based on Category and Page Number"""
         
-        # Allows a url too
+        # Fetch Webpage and parse html document. Method provided by BaseEnging
         soup = self.get_response_object(
             url = self.get_formated_url(url=kwargs.pop('url'),path='',params='') if kwargs.get(
             'url') else self.get_formated_url(category=category, page=page, params={},**kwargs)) 
         
-        self.results = await self.parse_parent_object(soup,**kwargs)
+        # Return a list of individually parsed song object.
+        self.results =  self.parse_parent_object(soup,**kwargs)
         return self.results
 
     def search(self,query='',page=1,category=None,**kwargs):
@@ -47,26 +95,15 @@ class SongsLover(BaseEngine):
         return self.results    
         
            
-    async def parse_parent_object(self, soup,**kwargs):
+    def parse_parent_object(self, soup, **kwargs):
         """
         Parses Engine Soup for links to individual items 
         and parse those links then pass thier soups to parse single object
         """
+
+        # soup.select("article h2 a"): list of song urls within the soup object
+        # for each link scrape the page and get the song details.
         
-        # TODO: make this async
-        
-        # Async part
-        # start = time.perf_counter()
-        # result = await asyncio.gather(
-        #     *(self.parse_single_object(
-        #         self.get_response_object(elem["href"], **kwargs),
-        #         category=elem['href'].split('/')[3],
-        #         **kwargs)
-        #     for elem in tqdm(soup.select("article h2 a")))
-        # )
-        # end = time.perf_counter() - start
-        
-        start = time.perf_counter()
         result = list(
             self.parse_single_object(
                 self.get_response_object(elem["href"], **kwargs),
@@ -74,9 +111,6 @@ class SongsLover(BaseEngine):
                 **kwargs)
             for elem in tqdm(soup.select("article h2 a"))
         )
-        end = start - time.perf_counter()
-        
-        print(end)
         return result
            
         
@@ -97,7 +131,7 @@ class SongsLover(BaseEngine):
         # Songslover has upgraded thier pages multiple times so the page elements are different
         # This is parsed to accomadate some of the changes 
 
-        # Extract artist and song title. art and download_link
+        # Extract artist, song title, art and download_link
         artist, title = self._get_description(soup)
         art_link = self._get_art_link(soup)
         download_link = self._get_download_link(soup, category)
@@ -108,8 +142,7 @@ class SongsLover(BaseEngine):
                 return dict(type='track',category=category,artist=artist,title=title,
                     download=download_link,art=art_link)
         
-        
-        # TODO: Make this async    
+         
         # Get song and individual download link for song
         else:
             track_details = self._get_individual_download_link(soup)
@@ -118,10 +151,9 @@ class SongsLover(BaseEngine):
     
     
     def get_query_params(self, query=None,**kwargs):
-        return {
-            's':query
-        }
+        return {'s':query}
 
+    
     def get_url_path(self, page=None, category=None):
         """Path to Page Content"""
         if page <= 0:
@@ -195,8 +227,7 @@ class SongsLover(BaseEngine):
         
         return download_link
      
-    def _get_individual_download_link(self, soup):
-        
+    def _get_individual_download_link(self, soup): 
         keywords = ["Server","Youtube","Apple Store","Apple Music",
             "ITunes","Amazon Music","Amazon Store","Buy Album","Download Album",]
         

@@ -12,7 +12,6 @@ import utils.helpers as helpers
 
 
 class BaseEngine(ABC):
-
     """
     Search base to be extended by search engine
     Every subclass must have two methods `search` amd `parse_single_object`
@@ -137,34 +136,40 @@ class BaseEngine(ABC):
         webpage = requests.get(url, headers=header)
         soup = bs4(webpage.content, "html.parser")
         return soup
-    
-    async def fetch_page_content(self, session, url, method=None, payload=None, headers=None): 
-        header = helpers.get_header() if header is None else header
-        method = helpers.request_method if method is None else method
 
-        if hasattr(session, method.lower()):
-
-
-
-    async def get_response_object_async(self, url, method=None, payload=None, headers=None, **kwargs):
+    async def fetch_webpage(
+            self, session: aiohttp.ClientSession, url: str, method=None): 
         """
-        Returns the source code of a webpage.
+        Returns the source source code of a webpage, if it exist or None.
 
-        :rtype: Json/soup
+        :rtype
+        :session: resusable aiohttp.ClientSession
         :param url: URL to pull it's source code
         :method: str -> request method post/get
         :payload: dict -> A payload For post requests
         :header: dict -> The request header
         :return: Html source code or Json of a given URL.
-        """ 
-
-        header = helpers.get_header() if header is None else header
-        method = helpers.request_method if method is None else method
-        pass
+        """
         
+        if method == self.POST:
+            pass
 
+        # Get url asynchronously 
+        async with session.get(url) as response:
+            if response.status == 200:
+                return await response.text('utf-8')
+            else:
+                return None
 
-
+    def parse_webpage(self, webpage):
+        """
+        Returns a beautiful soup object of the webpage
+ 
+        :rtype: BS4 object
+        :webpage html from a url
+        """
+        soup = bs4(webpage, "html.parser")
+        return soup
 
     def get_query_params(self, query=None,page=None,category=None,**kwargs):
         """ This  function should be overwritten to return a dictionary of query params"""
@@ -178,7 +183,4 @@ class BaseEngine(ABC):
         """Every div/span/json containing link to the single object which
            could then be fetched passed into parse single object to retrieve objects tiltle,download link,etc """
         # Override if engine needs to parse parent object"""
-        return 
-        
-    async def perform_operation(self):
-        pass
+        return

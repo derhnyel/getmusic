@@ -88,4 +88,6 @@ def noop():
 
 class CacheHandler:
     def cache_fetched_items():
-        return "Fetched results stored in a cache" 
+        return "Fetched results stored in a cache"
+
+
