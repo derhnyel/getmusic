@@ -19,7 +19,7 @@ class SongsLover(BaseEngine):
         super().__init__()
         self.site_uri = "https://songslover.me/"
         self.request_method = self.GET
-
+ 
     def custom_fetch(self, category="tracks", page=1, **kwargs):
         # Parse Uri
         url = self.get_formated_url(url=kwargs.pop('url'),path="",params='') if kwargs 
@@ -40,7 +40,7 @@ class SongsLover(BaseEngine):
 
     def custom_parser(self, link, category, **kwargs):
 
-        # Get song page
+        # Get song Webpage
         soup = self.get_response_object(link)
 
         # Extract artist, song title, art and download_link
@@ -51,9 +51,8 @@ class SongsLover(BaseEngine):
 
         # For track extract download link.    
         if category == "tracks":
-            if download_link!=None:
-                return dict(type='track',category=category,artist=artist,title=title,
-                    download=download_link,art=art_link)
+            return dict(type='track',category=category,artist=artist,title=title,
+                download=download_link,art=art_link)
         
          
         # For album extract get each song and their link
@@ -61,7 +60,6 @@ class SongsLover(BaseEngine):
             track_details = self._get_individual_download_link(soup)
             return dict(type='album',category=category,artist=artist,title=title,
                 download=download_link,art=art_link,details=track_details)
-
 
 
     def fetch(self,category='tracks',page=1,**kwargs):
@@ -76,6 +74,7 @@ class SongsLover(BaseEngine):
         self.results =  self.parse_parent_object(soup,**kwargs)
         return self.results
 
+    
     def search(self,query='',page=1,category=None,**kwargs):
         """Search Engine with query, page ,category parameters"""
 
@@ -162,6 +161,7 @@ class SongsLover(BaseEngine):
             page = 255
         return (category, self.page_path, str(page)) 
     
+    
     def _get_description(self, soup):
         description = soup.select(
             'div[class="post-inner"] h1 span[itemprop="name"]'
@@ -174,6 +174,7 @@ class SongsLover(BaseEngine):
             
         return artist, title
     
+    
     def _get_art_link(self, soup):
         """Generate the art link of a song
 
@@ -183,11 +184,14 @@ class SongsLover(BaseEngine):
         try:
             art_link = soup.select('div[class="entry"] img[src]')[0]["data-src"]
         except Exception:
-            art_link = None
+            art_link = "Unavailable"
+
         return art_link
         
+    
     def _get_download_link(self,soup, category):
         download_link = None
+
         if category == "track":
             # Handle different Formats to Get Download Link
             regex_group = [

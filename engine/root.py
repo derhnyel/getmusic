@@ -53,7 +53,7 @@ class BaseEngine(ABC):
     results=None
 
     def __init__(self) -> None:
-        super().__init__()
+        super().__init
 
     @abstractmethod
     def search(self, query=None, page=None, category=None,**kwargs):
@@ -141,7 +141,7 @@ class BaseEngine(ABC):
             self, session: aiohttp.ClientSession, url: str, method=None): 
         """
         Returns the source source code of a webpage, if it exist or None.
-
+ 
         :rtype
         :session: resusable aiohttp.ClientSession
         :param url: URL to pull it's source code

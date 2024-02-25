@@ -4,6 +4,8 @@ import random
 import validators
 from validators import ValidationFailure
 import json
+import functools
+import asyncio
 
 
 USER_AGENTS = [
@@ -82,12 +84,23 @@ def numerize(num):
         return f"{num/10**6:.1f}M"
     return num
 
-
-def noop():
-    pass
-
 class CacheHandler:
     def cache_fetched_items():
         return "Fetched results stored in a cache"
 
 
+# Convert a sync function to async 
+def force_async(fn):
+    '''
+    turns a sync function to async function using threads
+    '''
+    from concurrent.futures import ThreadPoolExecutor
+    import asyncio
+    pool = ThreadPoolExecutor()
+
+    @functools.wraps(fn)
+    def wrapper(*args, **kwargs):
+        future = pool.submit(fn, *args, **kwargs)
+        return asyncio.wrap_future(future)  # make it awaitable
+
+    return wrapper
